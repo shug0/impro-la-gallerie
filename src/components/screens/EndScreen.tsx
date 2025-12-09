@@ -76,7 +76,7 @@ export const EndScreen = ({ onClose, className = "" }: EndScreenProps) => {
         className="absolute bottom-8 text-center"
       >
         <p className="text-gray-700 text-xs tracking-widest">
-          LA GALLERIE
+          LA galerie
         </p>
         <p className="text-gray-800 text-xs mt-1">
           Collection du Metropolitan Museum of Art

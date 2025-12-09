@@ -1,4 +1,4 @@
-# Test Error Report - La Gallerie
+# Test Error Report - La galerie
 
 ## Test Summary
 - **Total Tests:** 61
@@ -127,9 +127,9 @@
 12. **Connection quality detection** - Adjust behavior based on network speed
 
 ## Test Files for Reference
-- `/Users/tomo/Dev/la-gallerie/src/services/metMuseumApi.test.ts`
-- `/Users/tomo/Dev/la-gallerie/src/hooks/useArtworkGallery.test.ts`
-- `/Users/tomo/Dev/la-gallerie/src/components/ArtworkDisplay.test.tsx`
+- `/Users/tomo/Dev/la-galerie/src/services/metMuseumApi.test.ts`
+- `/Users/tomo/Dev/la-galerie/src/hooks/useArtworkGallery.test.ts`
+- `/Users/tomo/Dev/la-galerie/src/components/ArtworkDisplay.test.tsx`
 
 ## Next Steps
 1. Fix critical issues (image load failures, timeouts)

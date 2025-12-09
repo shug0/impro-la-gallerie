@@ -12,7 +12,7 @@ export interface WaitingScreenProps {
 
 /**
  * Écran de présentation/attente
- * - Grand titre "La Gallerie"
+ * - Grand titre "La galerie"
  * - Citations rotatives toutes les 15 secondes
  * - Nombre d'œuvres disponibles
  * - Préchargement de la première œuvre (cachée dans le DOM)
@@ -38,7 +38,7 @@ export const WaitingScreen = ({
         transition={{ duration: 1, delay: 0.3 }}
         className="font-display text-8xl md:text-9xl text-warm-white mb-16 tracking-wide"
       >
-        La Gallerie
+        La galerie
       </motion.h1>
 
       {/* Citation avec rotation toutes les 15 secondes */}

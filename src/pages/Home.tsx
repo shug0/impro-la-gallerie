@@ -15,7 +15,7 @@ export default function Home() {
           transition={{ duration: 1, delay: 0.2 }}
           className="font-display text-7xl md:text-8xl text-warm-white mb-16 tracking-wide text-center"
         >
-          La Gallerie
+          La galerie
         </motion.h1>
 
         {/* Description */}

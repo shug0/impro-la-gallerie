@@ -38,7 +38,7 @@ export const ConfigurationScreen = ({
       >
         {/* Titre */}
         <h1 className="font-display text-5xl text-warm-white mb-6 tracking-wide text-center">
-          La Gallerie
+          La galerie
         </h1>
 
         {/* Description */}

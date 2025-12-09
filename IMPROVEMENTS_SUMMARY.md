@@ -1,7 +1,7 @@
-# Summary of Error Handling Improvements - La Gallerie
+# Summary of Error Handling Improvements - La galerie
 
 ## Overview
-This document summarizes the improvements made to handle errors and improve reliability in La Gallerie. All changes were driven by comprehensive Vitest tests that identified 24 failing scenarios out of 61 total tests.
+This document summarizes the improvements made to handle errors and improve reliability in La galerie. All changes were driven by comprehensive Vitest tests that identified 24 failing scenarios out of 61 total tests.
 
 ## Changes Made
 
