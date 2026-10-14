@@ -1,4 +1,8 @@
 const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
+// /v1/search was retired on 2026-10-01. v1.1 returns at most 500 IDs per page
+// and an empty page past offset 10000.
+const SEARCH_URL = 'https://collectionapi.metmuseum.org/public/collection/v1.1/search';
+const SEARCH_PAGE_SIZE = 500;
 
 // Départements sélectionnés pour une variété d'œuvres visuelles
 const DEFAULT_DEPARTMENTS = [
@@ -62,7 +66,7 @@ class MetMuseumService {
 
   /**
    * Configure le mode de la galerie
-   * @param mode - 'exploration' (189K œuvres) ou 'masterpieces' (2,7K highlights)
+   * @param mode - 'exploration' (299K œuvres) ou 'masterpieces' (2,3K highlights)
    */
   setMode(mode: GalleryMode): void {
     // Si le mode change après initialisation, on reset
@@ -87,50 +91,44 @@ class MetMuseumService {
         console.log(`${modeLabel} - Fetching all highlights globally...`);
 
         try {
-          const response = await fetch(
-            `${BASE_URL}/search?hasImages=true&isHighlight=true&q=*`
-          );
+          let offset = 0;
+          let total = 0;
 
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
+          do {
+            const response = await fetch(
+              `${SEARCH_URL}?hasImages=true&isHighlight=true&q=*&limit=${SEARCH_PAGE_SIZE}&offset=${offset}`
+            );
 
-          const data = await response.json();
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
 
-          if (data.objectIDs && data.objectIDs.length > 0) {
-            allObjectIds = data.objectIDs;
-            console.log(`   ✅ Global highlights: ${data.objectIDs.length.toLocaleString()} objects`);
-          }
+            const data = await response.json();
+            allObjectIds.push(...(data.objectIDs ?? []));
+            total = data.total ?? 0;
+            offset += SEARCH_PAGE_SIZE;
+          } while (offset < total);
+
+          console.log(`   ✅ Global highlights: ${allObjectIds.length.toLocaleString()} objects`);
         } catch (error) {
           console.error('⚠️  Failed to fetch highlights:', error);
           throw error;
         }
       } else {
-        // Mode exploration: récupérer par département pour plus de variété
+        // Mode exploration: /objects ne filtre pas sur la présence d'image,
+        // les œuvres sans image sont écartées au tirage (fetchRandomArtworkWithRetry)
         console.log(`${modeLabel} - Initializing with ${this.departments.length} departments...`);
 
-        for (const deptId of this.departments) {
-          try {
-            const response = await fetch(
-              `${BASE_URL}/search?hasImages=true&departmentId=${deptId}&q=*`
-            );
+        const response = await fetch(
+          `${BASE_URL}/objects?departmentIds=${this.departments.join('|')}`
+        );
 
-            if (!response.ok) {
-              console.warn(`⚠️  Department ${deptId}: HTTP ${response.status}`);
-              continue;
-            }
-
-            const data = await response.json();
-
-            if (data.objectIDs && data.objectIDs.length > 0) {
-              allObjectIds.push(...data.objectIDs);
-              console.log(`   ✅ Dept ${deptId}: ${data.objectIDs.length.toLocaleString()} objects`);
-            }
-          } catch (error) {
-            console.warn(`⚠️  Department ${deptId} failed:`, error);
-            // Continue avec les autres départements
-          }
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
         }
+
+        const data = await response.json();
+        allObjectIds = data.objectIDs ?? [];
       }
 
       if (allObjectIds.length === 0) {

@@ -21,9 +21,9 @@ describe('MetMuseumService', () => {
 
   describe('initialization', () => {
     it('should initialize successfully in exploration mode', async () => {
-      // Mock successful department searches
+      // Mock successful department listing
       (global.fetch as any).mockImplementation((url: string) => {
-        if (url.includes('/search')) {
+        if (url.includes('/objects?departmentIds=11|21|19|6|9|1')) {
           return Promise.resolve({
             ok: true,
             json: async () => ({ objectIDs: [1, 2, 3, 4, 5] }),
@@ -99,7 +99,6 @@ describe('MetMuseumService', () => {
     });
 
     it('should deduplicate object IDs', async () => {
-      // Mock multiple departments returning some duplicate IDs
       (global.fetch as any).mockImplementation(() =>
         Promise.resolve({
           ok: true,
@@ -109,29 +108,25 @@ describe('MetMuseumService', () => {
 
       await metMuseumService.initialize();
 
-      // Should have deduplicated IDs (3 unique from 6 total across departments)
-      expect(metMuseumService.availableArtworksCount).toBeLessThanOrEqual(18); // 3 per dept * 6 depts
+      expect(metMuseumService.availableArtworksCount).toBe(3);
     });
 
-    it('should continue if one department fails in exploration mode', async () => {
-      let callCount = 0;
-      (global.fetch as any).mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) {
-          // First department fails
-          return Promise.reject(new Error('Department unavailable'));
-        }
-        // Other departments succeed
+    it('should fetch every highlights page in masterpieces mode', async () => {
+      metMuseumService.setMode('masterpieces');
+
+      (global.fetch as any).mockImplementation((url: string) => {
+        const offset = Number(new URL(url).searchParams.get('offset'));
+        const objectIDs = Array.from({ length: offset === 0 ? 500 : 200 }, (_, i) => offset + i + 1);
         return Promise.resolve({
           ok: true,
-          json: async () => ({ objectIDs: [1, 2, 3] }),
+          json: async () => ({ total: 700, objectIDs }),
         });
       });
 
       await metMuseumService.initialize();
 
-      expect(metMuseumService.isInitialized).toBe(true);
-      expect(metMuseumService.availableArtworksCount).toBeGreaterThan(0);
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+      expect(metMuseumService.availableArtworksCount).toBe(700);
     });
   });
 
