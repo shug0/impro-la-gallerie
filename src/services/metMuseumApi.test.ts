@@ -6,7 +6,7 @@ global.fetch = vi.fn();
 
 describe('MetMuseumService', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     // Reset service state
     (metMuseumService as any).objectIds = [];
     (metMuseumService as any).initialized = false;
