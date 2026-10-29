@@ -1,0 +1,10 @@
+// Worker Cloudflare sans code : il sert les fichiers statiques de dist/.
+{
+  "name": "galerie",
+  "compatibility_date": "2026-10-29",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [{ "pattern": "galerie.orguin.com", "custom_domain": true }]
+}
