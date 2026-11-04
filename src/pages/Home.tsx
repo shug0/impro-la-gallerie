@@ -23,7 +23,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-gray-400 text-xl md:text-2xl text-center max-w-4xl mb-20 leading-relaxed px-8"
+          className="text-gray-400 text-xl md:text-2xl text-center max-w-4xl mb-20 leading-relaxed md:leading-8 px-8"
         >
           Projetez des œuvres d'art du Metropolitan Museum, sélectionnées aléatoirement.
           <br />

@@ -58,7 +58,7 @@ export const ArtworkMetadata = ({
       >
         <div className="p-8 h-full flex flex-col justify-end">
           {/* Titre de l'œuvre */}
-          <h2 className="text-warm-white text-2xl md:text-3xl font-display mb-2 leading-tight">
+          <h2 className="text-warm-white text-2xl md:text-3xl font-display mb-2 leading-tight md:leading-9">
             {artwork.title}
           </h2>
 

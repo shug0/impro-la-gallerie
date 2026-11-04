@@ -35,7 +35,7 @@ export const EndScreen = ({ onClose, className = "" }: EndScreenProps) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="text-gray-400 text-2xl md:text-3xl text-center max-w-3xl px-8 mb-16 leading-relaxed"
+        className="text-gray-400 text-2xl md:text-3xl text-center max-w-3xl px-8 mb-16 leading-relaxed md:leading-9"
       >
         d'avoir visité notre galerie
       </motion.p>
