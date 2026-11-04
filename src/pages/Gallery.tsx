@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFullscreen } from "../hooks/useFullscreen";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useKeyboardShortcuts, type KeyboardShortcut } from "../hooks/useKeyboardShortcuts";
 import { useMetMuseum } from "../hooks/useMetMuseum";
 import { useArtworkGallery } from "../hooks/useArtworkGallery";
 import { ConfigurationScreen } from "../components/screens/ConfigurationScreen";
@@ -134,8 +134,8 @@ export default function Gallery() {
   }, [status, handleLaunchGallery, goToNextArtwork]);
 
   // Configuration des raccourcis clavier
-  useKeyboardShortcuts(
-    [
+  const shortcuts = useMemo<KeyboardShortcut[]>(
+    () => [
       {
         code: "Space",
         handler: toggleHidden,
@@ -164,6 +164,7 @@ export default function Gallery() {
     ],
     [toggleHidden, handleNext, toggleFullscreen, handleShowEndScreen, handleCloseEndScreen]
   );
+  useKeyboardShortcuts(shortcuts);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-black">
