@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export const useAnimatedCounter = (max: number, intervalMs: number, isActive = true) => {
   const [count, setCount] = useState(1);
-  const rafId = useRef<number>();
+  const rafId = useRef<number>(undefined);
   const lastUpdate = useRef<number>(0);
   const isActiveRef = useRef(isActive);
 
