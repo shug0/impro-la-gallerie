@@ -44,7 +44,7 @@ describe('useArtworkGallery', () => {
           if (this.onload) this.onload();
         }, 100);
       }
-    } as any;
+    } as unknown as typeof Image;
   });
 
   afterEach(() => {
@@ -53,7 +53,7 @@ describe('useArtworkGallery', () => {
 
   describe('loadInitialArtwork', () => {
     it('should load initial artwork successfully', async () => {
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2);
 
@@ -77,7 +77,7 @@ describe('useArtworkGallery', () => {
     });
 
     it('should handle artwork fetch failure', async () => {
-      (metMuseumService.getRandomArtwork as any).mockRejectedValueOnce(
+      vi.mocked(metMuseumService.getRandomArtwork).mockRejectedValueOnce(
         new Error('Failed to fetch artwork')
       );
 
@@ -110,9 +110,9 @@ describe('useArtworkGallery', () => {
             }
           }, 11000); // Exceed 10s timeout
         }
-      } as any;
+      } as unknown as typeof Image;
 
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(mockArtwork);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -139,9 +139,9 @@ describe('useArtworkGallery', () => {
             }
           }, 50);
         }
-      } as any;
+      } as unknown as typeof Image;
 
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(mockArtwork);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -157,7 +157,7 @@ describe('useArtworkGallery', () => {
     });
 
     it('should not reload if already loaded', async () => {
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2);
 
@@ -171,7 +171,7 @@ describe('useArtworkGallery', () => {
         expect(result.current.currentArtwork).toBeTruthy();
       });
 
-      const fetchCallCount = (metMuseumService.getRandomArtwork as any).mock.calls.length;
+      const fetchCallCount = vi.mocked(metMuseumService.getRandomArtwork).mock.calls.length;
 
       // Try loading again
       await act(async () => {
@@ -179,11 +179,11 @@ describe('useArtworkGallery', () => {
       });
 
       // Should not fetch again
-      expect((metMuseumService.getRandomArtwork as any).mock.calls.length).toBe(fetchCallCount);
+      expect(vi.mocked(metMuseumService.getRandomArtwork).mock.calls.length).toBe(fetchCallCount);
     });
 
     it('should handle null artwork from service', async () => {
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(null);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(null);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -200,7 +200,7 @@ describe('useArtworkGallery', () => {
 
     it('should handle artwork without primaryImage', async () => {
       const artworkNoImage = { ...mockArtwork, primaryImage: '' };
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(artworkNoImage);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(artworkNoImage);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -224,7 +224,7 @@ describe('useArtworkGallery', () => {
         primaryImage: 'https://example.com/image3.jpg',
       };
 
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2)
         .mockResolvedValueOnce(mockArtwork3);
@@ -255,7 +255,7 @@ describe('useArtworkGallery', () => {
     });
 
     it('should handle no next artwork available', async () => {
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(mockArtwork);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -269,7 +269,7 @@ describe('useArtworkGallery', () => {
       });
 
       // Manually set nextArtwork to null for testing
-      (result.current as any).nextArtwork = null;
+      result.current.nextArtwork = null;
 
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
@@ -283,7 +283,7 @@ describe('useArtworkGallery', () => {
     });
 
     it('should handle preload failure for N+2 artwork', async () => {
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2)
         .mockRejectedValueOnce(new Error('Failed to fetch N+2'));
@@ -333,9 +333,9 @@ describe('useArtworkGallery', () => {
         get src() {
           return this._src;
         }
-      } as any;
+      } as unknown as typeof Image;
 
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2);
 
@@ -370,9 +370,9 @@ describe('useArtworkGallery', () => {
             }
           }, 50);
         }
-      } as any;
+      } as unknown as typeof Image;
 
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(mockArtwork);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -398,9 +398,9 @@ describe('useArtworkGallery', () => {
             }
           }, 50);
         }
-      } as any;
+      } as unknown as typeof Image;
 
-      (metMuseumService.getRandomArtwork as any).mockResolvedValueOnce(mockArtwork);
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
 
       const { result } = renderHook(() => useArtworkGallery());
 
@@ -416,7 +416,7 @@ describe('useArtworkGallery', () => {
 
   describe('error recovery', () => {
     it('should clear error when loading new artwork', async () => {
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockRejectedValueOnce(new Error('First error'))
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2);
@@ -445,7 +445,7 @@ describe('useArtworkGallery', () => {
 
   describe('race conditions', () => {
     it('should handle rapid navigation clicks', async () => {
-      (metMuseumService.getRandomArtwork as any)
+      vi.mocked(metMuseumService.getRandomArtwork)
         .mockResolvedValueOnce(mockArtwork)
         .mockResolvedValueOnce(mockArtwork2)
         .mockResolvedValue({ ...mockArtwork, objectID: 99 });

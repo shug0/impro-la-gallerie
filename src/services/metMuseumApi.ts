@@ -286,7 +286,7 @@ class MetMuseumService {
               preloaded++;
             }
           }
-        } catch (error) {
+        } catch {
           // Silent fail for preloading
         }
         attempts++;
@@ -338,7 +338,7 @@ class MetMuseumService {
               preloaded++;
             }
           }
-        } catch (error) {
+        } catch {
           // Silent fail for preloading
         }
 

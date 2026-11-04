@@ -19,4 +19,4 @@ globalThis.Image = class MockImage {
       if (this.onload) this.onload();
     }, 100);
   }
-} as any;
+} as unknown as typeof Image;

@@ -123,13 +123,13 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
 
           // Succès complet, sortir de la boucle
           break;
-        } catch (imageErr) {
+        } catch {
           // Image failed to load, try next artwork
           attempts++;
           console.log(`🔄 Auto-skip (${attempts}/${maxAttempts})`);
           continue;
         }
-      } catch (err) {
+      } catch {
         attempts++;
       }
     }
@@ -162,7 +162,7 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
             setNextArtwork(next);
             preloadImage(next.primaryImage).catch(() => {});
           }
-        } catch (err) {
+        } catch {
           setError("Unable to load next artwork");
         }
       }
@@ -189,7 +189,7 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
           }
         });
       }
-    } catch (err) {
+    } catch {
       // Not critical, user can still navigate
     }
   }, [nextArtwork, fetchNewArtwork, preloadImage]);
