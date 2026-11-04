@@ -57,23 +57,23 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
 
   /**
    * Récupère une nouvelle œuvre depuis le service Met Museum
-   * Avec protection contre la récursion infinie
+   * Réessaie au plus `maxRetries` fois si l'œuvre reçue n'a pas d'image
    */
   const fetchNewArtwork = useCallback(async (maxRetries = 5): Promise<Artwork | null> => {
     try {
-      const artwork = await metMuseumService.getRandomArtwork();
+      for (let retriesLeft = maxRetries; ; retriesLeft--) {
+        const artwork = await metMuseumService.getRandomArtwork();
 
-      if (!artwork || !artwork.primaryImage) {
-        if (maxRetries > 0) {
-          return fetchNewArtwork(maxRetries - 1); // Retry avec compteur
-        } else {
+        if (artwork && artwork.primaryImage) {
+          console.log(`📦 Fetched #${artwork.objectID}: "${artwork.title}"`);
+          return artwork;
+        }
+
+        if (retriesLeft <= 0) {
           console.error("❌ Max retries reached");
           return null;
         }
       }
-
-      console.log(`📦 Fetched #${artwork.objectID}: "${artwork.title}"`);
-      return artwork;
     } catch (err) {
       console.error("Failed to fetch artwork:", err);
       setError(err instanceof Error ? err.message : "Failed to load artwork");
