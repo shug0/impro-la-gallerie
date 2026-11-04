@@ -47,18 +47,20 @@ export default function Gallery() {
     goToNextArtwork,
   } = useArtworkGallery();
 
-  // Synchroniser le statut avec les états du hook useMetMuseum
-  useEffect(() => {
-    if (status === 'configuration') return;
-
+  // Synchroniser le statut avec les états du hook useMetMuseum, pendant le rendu
+  if (status !== 'configuration') {
+    let syncedStatus: GalleryStatus = status;
     if (error) {
-      setStatus('error');
+      syncedStatus = 'error';
     } else if (isLoading) {
-      setStatus('loading');
+      syncedStatus = 'loading';
     } else if (isReady && status === 'loading') {
-      setStatus('waiting');
+      syncedStatus = 'waiting';
     }
-  }, [status, error, isLoading, isReady]);
+    if (syncedStatus !== status) {
+      setStatus(syncedStatus);
+    }
+  }
 
   // Rotation des citations pendant le chargement (toutes les 5 secondes)
   useEffect(() => {
