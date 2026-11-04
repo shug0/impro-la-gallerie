@@ -12,6 +12,7 @@ import { ArtworkMetadata } from "../components/artwork/ArtworkMetadata";
 import { ErrorRecovery } from "../components/screens/ErrorRecovery";
 import { EndScreen } from "../components/screens/EndScreen";
 import { Button } from "../components/ui/Button";
+import { TouchControls } from "../components/ui/TouchControls";
 import { getRandomQuote } from "../data/quotes";
 import type { GalleryMode } from "../services/metMuseumApi";
 
@@ -168,6 +169,8 @@ export default function Gallery() {
   );
   useKeyboardShortcuts(shortcuts);
 
+  const hasTouchControls = status === 'waiting' || status === 'artwork';
+
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-black">
       {/* Overlay noir pour le toggle fade (régie) */}
@@ -179,10 +182,34 @@ export default function Gallery() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="absolute inset-0 bg-black z-50"
+          >
+            {/* Sur tactile, un toucher n'importe où réaffiche l'interface (comme Espace) */}
+            <button
+              type="button"
+              onClick={toggleHidden}
+              aria-label="Réafficher l'interface"
+              className="absolute inset-0 hidden items-end justify-center pb-touch-bar pointer-coarse:flex"
+            >
+              <span className="text-gray-700 text-xs">Toucher l'écran pour réafficher</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {hasTouchControls && !isHidden && (
+          <TouchControls
+            key="touch-controls"
+            onHide={toggleHidden}
+            onToggleFullscreen={toggleFullscreen}
+            onNext={handleNext}
+            onEnd={handleShowEndScreen}
           />
         )}
       </AnimatePresence>
 
+      {/* Sur tactile, la hauteur de la barre est réservée sous le contenu */}
+      <div className={`absolute inset-0 ${hasTouchControls ? 'pointer-coarse:bottom-touch-bar' : ''}`}>
       <AnimatePresence mode="wait">
         {(() => {
           switch (status) {
@@ -294,6 +321,7 @@ export default function Gallery() {
           }
         })()}
       </AnimatePresence>
+      </div>
     </div>
   );
 }

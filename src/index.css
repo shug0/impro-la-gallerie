@@ -9,6 +9,9 @@
   --color-gallery-gray: #9ca3af;
   --color-gallery-border: #4b5563;
   --color-gallery-muted: #6b7280;
+
+  /* Hauteur de la barre tactile (TouchControls) : bouton de 44 px, marge de 12 px dessus et dessous, zone sûre */
+  --spacing-touch-bar: calc(4.25rem + env(safe-area-inset-bottom));
 }
 
 /*
