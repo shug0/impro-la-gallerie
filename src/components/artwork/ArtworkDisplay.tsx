@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Artwork } from "../../services/metMuseumApi";
 
@@ -25,17 +25,21 @@ export const ArtworkDisplay = ({
   className = "",
 }: ArtworkDisplayProps) => {
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [shownIds, setShownIds] = useState({
+    current: currentArtwork.objectID,
+    next: nextArtwork?.objectID,
+  });
 
-  // Reset loaded state when artwork changes
-  useEffect(() => {
+  // Marque l'œuvre courante et la suivante comme chargées quand l'une change (déjà préchargées)
+  if (shownIds.current !== currentArtwork.objectID || shownIds.next !== nextArtwork?.objectID) {
+    setShownIds({ current: currentArtwork.objectID, next: nextArtwork?.objectID });
     setLoadedImages(prev => {
-      // Keep only the current and next artwork as loaded
       const newSet = new Set(prev);
-      if (currentArtwork) newSet.add(currentArtwork.objectID);
+      newSet.add(currentArtwork.objectID);
       if (nextArtwork) newSet.add(nextArtwork.objectID);
       return newSet;
     });
-  }, [currentArtwork.objectID, nextArtwork?.objectID]);
+  }
 
   /**
    * Détecte le ratio de l'image et appelle le callback
