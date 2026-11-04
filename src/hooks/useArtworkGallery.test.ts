@@ -34,7 +34,7 @@ describe('useArtworkGallery', () => {
     vi.clearAllMocks();
 
     // Mock Image constructor with controlled behavior
-    global.Image = class {
+    globalThis.Image = class {
       onload: (() => void) | null = null;
       onerror: (() => void) | null = null;
       src = '';
@@ -98,7 +98,7 @@ describe('useArtworkGallery', () => {
 
     it('should handle image preload timeout', async () => {
       // Mock Image with timeout
-      global.Image = class {
+      globalThis.Image = class {
         onload: (() => void) | null = null;
         onerror: ((error: Error) => void) | null = null;
         src = '';
@@ -127,7 +127,7 @@ describe('useArtworkGallery', () => {
 
     it('should handle image load failure', async () => {
       // Mock Image that fails to load
-      global.Image = class {
+      globalThis.Image = class {
         onload: (() => void) | null = null;
         onerror: ((error: Error) => void) | null = null;
         src = '';
@@ -317,7 +317,7 @@ describe('useArtworkGallery', () => {
     it('should preload images in background', async () => {
       const imageLoadSpy = vi.fn();
 
-      global.Image = class {
+      globalThis.Image = class {
         onload: (() => void) | null = null;
         onerror: (() => void) | null = null;
         _src = '';
@@ -356,7 +356,7 @@ describe('useArtworkGallery', () => {
     });
 
     it('should handle CORS errors on image load', async () => {
-      global.Image = class {
+      globalThis.Image = class {
         onload: (() => void) | null = null;
         onerror: ((error: Error) => void) | null = null;
         src = '';
@@ -386,7 +386,7 @@ describe('useArtworkGallery', () => {
     });
 
     it('should handle 404 image URLs', async () => {
-      global.Image = class {
+      globalThis.Image = class {
         onload: (() => void) | null = null;
         onerror: ((error: Error) => void) | null = null;
         src = '';

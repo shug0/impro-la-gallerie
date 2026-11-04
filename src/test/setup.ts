@@ -9,7 +9,7 @@ afterEach(() => {
 });
 
 // Mock Image for preloading tests
-global.Image = class MockImage {
+globalThis.Image = class MockImage {
   onload: (() => void) | null = null;
   onerror: (() => void) | null = null;
   src = '';

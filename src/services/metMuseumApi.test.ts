@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { metMuseumService } from './metMuseumApi';
 
 // Mock fetch globally
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 
 describe('MetMuseumService', () => {
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe('MetMuseumService', () => {
   describe('initialization', () => {
     it('should initialize successfully in exploration mode', async () => {
       // Mock successful department listing
-      (global.fetch as any).mockImplementation((url: string) => {
+      (globalThis.fetch as any).mockImplementation((url: string) => {
         if (url.includes('/objects?departmentIds=11|21|19|6|9|1')) {
           return Promise.resolve({
             ok: true,
@@ -42,7 +42,7 @@ describe('MetMuseumService', () => {
       metMuseumService.setMode('masterpieces');
 
       // Mock successful highlights search
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ objectIDs: [10, 20, 30, 40, 50] }),
       });
@@ -55,7 +55,7 @@ describe('MetMuseumService', () => {
 
     it('should handle API returning HTML instead of JSON', async () => {
       // This simulates the error we found: /search without q parameter returns HTML
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => {
           throw new SyntaxError('Unexpected token \'<\', "<!DOCTYPE "... is not valid JSON');
@@ -66,13 +66,13 @@ describe('MetMuseumService', () => {
     });
 
     it('should handle network errors during initialization', async () => {
-      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+      (globalThis.fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       await expect(metMuseumService.initialize()).rejects.toThrow('Network error');
     });
 
     it('should handle HTTP errors (404, 500, etc)', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 500,
       });
@@ -81,7 +81,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should handle empty objectIDs response', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ objectIDs: [] }),
       });
@@ -90,7 +90,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should handle missing objectIDs in response', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({}),
       });
@@ -99,7 +99,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should deduplicate object IDs', async () => {
-      (global.fetch as any).mockImplementation(() =>
+      (globalThis.fetch as any).mockImplementation(() =>
         Promise.resolve({
           ok: true,
           json: async () => ({ objectIDs: [1, 2, 3, 1, 2, 3] }),
@@ -114,7 +114,7 @@ describe('MetMuseumService', () => {
     it('should fetch every highlights page in masterpieces mode', async () => {
       metMuseumService.setMode('masterpieces');
 
-      (global.fetch as any).mockImplementation((url: string) => {
+      (globalThis.fetch as any).mockImplementation((url: string) => {
         const offset = Number(new URL(url).searchParams.get('offset'));
         const objectIDs = Array.from({ length: offset === 0 ? 500 : 200 }, (_, i) => offset + i + 1);
         return Promise.resolve({
@@ -125,7 +125,7 @@ describe('MetMuseumService', () => {
 
       await metMuseumService.initialize();
 
-      expect(global.fetch).toHaveBeenCalledTimes(2);
+      expect(globalThis.fetch).toHaveBeenCalledTimes(2);
       expect(metMuseumService.availableArtworksCount).toBe(700);
     });
   });
@@ -133,7 +133,7 @@ describe('MetMuseumService', () => {
   describe('getRandomArtwork', () => {
     beforeEach(async () => {
       // Mock successful initialization
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ objectIDs: [1, 2, 3, 4, 5] }),
       });
@@ -152,7 +152,7 @@ describe('MetMuseumService', () => {
         objectDate: '2020',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => mockArtwork,
       });
@@ -182,7 +182,7 @@ describe('MetMuseumService', () => {
         primaryImage: 'https://example.com/image.jpg',
       };
 
-      (global.fetch as any)
+      (globalThis.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => mockArtworkNoImage,
@@ -216,7 +216,7 @@ describe('MetMuseumService', () => {
         title: 'Valid Artwork',
       };
 
-      (global.fetch as any)
+      (globalThis.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => mockArtworkNoTitle,
@@ -232,7 +232,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should handle 404 errors for individual artworks', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 404,
       });
@@ -245,7 +245,7 @@ describe('MetMuseumService', () => {
 
     it('should retry up to 3 times on failure', async () => {
       let attempts = 0;
-      (global.fetch as any).mockImplementation(() => {
+      (globalThis.fetch as any).mockImplementation(() => {
         attempts++;
         if (attempts < 3) {
           return Promise.reject(new Error('Network error'));
@@ -272,7 +272,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should handle malformed JSON responses', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => {
           throw new SyntaxError('Unexpected token');
@@ -292,7 +292,7 @@ describe('MetMuseumService', () => {
         // Missing: artistDisplayName, medium, dimensions, department, objectDate
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => mockArtworkMinimal,
       });
@@ -310,7 +310,7 @@ describe('MetMuseumService', () => {
   describe('mode switching', () => {
     it('should reset when mode changes after initialization', async () => {
       // Initialize in exploration mode
-      (global.fetch as any).mockResolvedValue({
+      (globalThis.fetch as any).mockResolvedValue({
         ok: true,
         json: async () => ({ objectIDs: [1, 2, 3] }),
       });
@@ -326,7 +326,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should not reset if mode stays the same', async () => {
-      (global.fetch as any).mockResolvedValue({
+      (globalThis.fetch as any).mockResolvedValue({
         ok: true,
         json: async () => ({ objectIDs: [1, 2, 3] }),
       });
@@ -343,7 +343,7 @@ describe('MetMuseumService', () => {
 
   describe('cache management', () => {
     it('should cache fetched artworks', async () => {
-      (global.fetch as any)
+      (globalThis.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ objectIDs: [1, 2, 3] }),
@@ -369,7 +369,7 @@ describe('MetMuseumService', () => {
     });
 
     it('should clear cache when requested', async () => {
-      (global.fetch as any)
+      (globalThis.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ objectIDs: [1, 2, 3] }),
@@ -402,7 +402,7 @@ describe('MetMuseumService', () => {
       const timeoutError = new Error('Timeout');
       timeoutError.name = 'AbortError';
 
-      (global.fetch as any).mockRejectedValueOnce(timeoutError);
+      (globalThis.fetch as any).mockRejectedValueOnce(timeoutError);
 
       await expect(metMuseumService.initialize()).rejects.toThrow();
     });
@@ -411,13 +411,13 @@ describe('MetMuseumService', () => {
       const corsError = new Error('CORS error');
       corsError.name = 'TypeError';
 
-      (global.fetch as any).mockRejectedValueOnce(corsError);
+      (globalThis.fetch as any).mockRejectedValueOnce(corsError);
 
       await expect(metMuseumService.initialize()).rejects.toThrow();
     });
 
     it('should handle rate limiting (429)', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 429,
       });
