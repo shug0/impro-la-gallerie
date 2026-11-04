@@ -51,8 +51,8 @@ export const ArtworkMetadata = ({
         className={`
           h-full
           ${isLandscape
-            ? 'bg-gradient-to-t from-black/90 via-black/70 to-transparent'
-            : 'bg-gradient-to-l from-black/90 via-black/70 to-transparent'
+            ? 'bg-linear-to-t from-black/90 via-black/70 to-transparent'
+            : 'bg-linear-to-l from-black/90 via-black/70 to-transparent'
           }
         `}
       >

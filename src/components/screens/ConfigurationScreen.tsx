@@ -64,28 +64,28 @@ export const ConfigurationScreen = ({
           className="flex gap-8 mb-12"
         >
           <div className="flex items-center gap-2 text-gray-400">
-            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded shadow-sm font-mono text-sm">
+            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded-sm shadow-xs font-mono text-sm">
               Entrée
             </kbd>
             <span className="text-sm">Suivant</span>
           </div>
 
           <div className="flex items-center gap-2 text-gray-400">
-            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded shadow-sm font-mono text-sm">
+            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded-sm shadow-xs font-mono text-sm">
               Espace
             </kbd>
             <span className="text-sm">Régie</span>
           </div>
 
           <div className="flex items-center gap-2 text-gray-400">
-            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded shadow-sm font-mono text-sm">
+            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded-sm shadow-xs font-mono text-sm">
               F
             </kbd>
             <span className="text-sm">Plein écran</span>
           </div>
 
           <div className="flex items-center gap-2 text-gray-400">
-            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded shadow-sm font-mono text-sm">
+            <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded-sm shadow-xs font-mono text-sm">
               E
             </kbd>
             <span className="text-sm">Fin</span>

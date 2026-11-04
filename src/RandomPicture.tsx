@@ -50,12 +50,12 @@ export default function RandomPicture() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="w-80 h-96 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg mb-6 relative overflow-hidden"
+            className="w-80 h-96 bg-linear-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg mb-6 relative overflow-hidden"
           >
             <motion.div
               animate={{ x: [-320, 320] }}
               transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              className="absolute top-0 left-0 w-80 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              className="absolute top-0 left-0 w-80 h-full bg-linear-to-r from-transparent via-white/10 to-transparent"
             />
           </motion.div>
           <motion.div
@@ -64,8 +64,8 @@ export default function RandomPicture() {
             transition={{ delay: 0.2, duration: 0.3 }}
             className="text-center"
           >
-            <div className="h-6 bg-gray-700 rounded w-60 mb-3 mx-auto"></div>
-            <div className="h-4 bg-gray-700 rounded w-40 mx-auto"></div>
+            <div className="h-6 bg-gray-700 rounded-sm w-60 mb-3 mx-auto"></div>
+            <div className="h-4 bg-gray-700 rounded-sm w-40 mx-auto"></div>
           </motion.div>
         </div>
         <motion.p 
@@ -99,7 +99,7 @@ export default function RandomPicture() {
           <button
             onClick={handleRetry}
             disabled={retryCount >= 3}
-            className="text-lg border border-white px-4 py-2 rounded hover:bg-white hover:text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="text-lg border border-white px-4 py-2 rounded-sm hover:bg-white hover:text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             {retryCount >= 3 ? "Limite atteinte" : "Réessayer"}
           </button>

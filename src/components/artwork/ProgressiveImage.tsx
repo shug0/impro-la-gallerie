@@ -50,7 +50,7 @@ export const ProgressiveImage = ({
 
   if (hasError) {
     return (
-      <div className={`flex items-center justify-center bg-gray-800 rounded ${className}`}>
+      <div className={`flex items-center justify-center bg-gray-800 rounded-sm ${className}`}>
         <span className="text-gray-400">Image non disponible</span>
       </div>
     );
@@ -68,7 +68,7 @@ export const ProgressiveImage = ({
           alt={alt}
           onLoad={handleLowResLoad}
           onError={handleLowResError}
-          className="w-full h-full object-contain filter blur-sm"
+          className="w-full h-full object-contain filter blur-xs"
           style={{ 
             position: 'absolute',
             top: 0,
@@ -101,7 +101,7 @@ export const ProgressiveImage = ({
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse"
+          className="absolute inset-0 bg-linear-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse"
         />
       )}
       

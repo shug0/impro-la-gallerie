@@ -63,7 +63,7 @@ export const EndScreen = ({ onClose, className = "" }: EndScreenProps) => {
           </Button>
 
           <p className="text-gray-600 text-sm mt-4">
-            ou appuyez sur <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded shadow-sm font-mono text-xs text-gray-400">Échap</kbd>
+            ou appuyez sur <kbd className="px-3 py-2 bg-warm-white/10 border border-gallery-border rounded-sm shadow-xs font-mono text-xs text-gray-400">Échap</kbd>
           </p>
         </motion.div>
       )}
