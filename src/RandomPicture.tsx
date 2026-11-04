@@ -9,23 +9,26 @@ export default function RandomPicture() {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
-  const fetchRandomArtwork = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const randomArtwork = await metMuseumService.getRandomArtwork();
-      if (randomArtwork) {
-        setArtwork(randomArtwork);
-        setRetryCount(0);
-      } else {
-        setError("Aucune œuvre trouvée");
-      }
-    } catch (err) {
-      setError("Erreur lors du chargement de l'œuvre");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  // Les états `loading` et `error` partent déjà de true et null au montage : seul le
+  // bouton Réessayer les remet à zéro avant l'appel
+  const fetchRandomArtwork = useCallback(() => {
+    metMuseumService
+      .getRandomArtwork()
+      .then((randomArtwork) => {
+        if (randomArtwork) {
+          setArtwork(randomArtwork);
+          setRetryCount(0);
+        } else {
+          setError("Aucune œuvre trouvée");
+        }
+      })
+      .catch((err: unknown) => {
+        setError("Erreur lors du chargement de l'œuvre");
+        console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -34,6 +37,8 @@ export default function RandomPicture() {
 
   const handleRetry = useCallback(() => {
     setRetryCount(prev => prev + 1);
+    setLoading(true);
+    setError(null);
     fetchRandomArtwork();
   }, [fetchRandomArtwork]);
 
