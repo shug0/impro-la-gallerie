@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 interface ProgressiveImageProps {
   src: string;
@@ -10,13 +10,13 @@ interface ProgressiveImageProps {
   onError?: () => void;
 }
 
-export const ProgressiveImage = ({ 
-  src, 
-  lowResSrc, 
-  alt, 
-  className = '', 
+export const ProgressiveImage = ({
+  src,
+  lowResSrc,
+  alt,
+  className = "",
   onLoad,
-  onError 
+  onError,
 }: ProgressiveImageProps) => {
   const [lowResLoaded, setLowResLoaded] = useState(false);
   const [highResLoaded, setHighResLoaded] = useState(false);
@@ -50,7 +50,9 @@ export const ProgressiveImage = ({
 
   if (hasError) {
     return (
-      <div className={`flex items-center justify-center bg-gray-800 rounded-sm ${className}`}>
+      <div
+        className={`flex items-center justify-center bg-gray-800 rounded-sm ${className}`}
+      >
         <span className="text-gray-400">Image non disponible</span>
       </div>
     );
@@ -69,42 +71,41 @@ export const ProgressiveImage = ({
           onLoad={handleLowResLoad}
           onError={handleLowResError}
           className="w-full h-full object-contain filter blur-xs"
-          style={{ 
-            position: 'absolute',
+          style={{
+            position: "absolute",
             top: 0,
             left: 0,
-            zIndex: 1
+            zIndex: 1,
           }}
         />
       )}
-      
+
       {/* High-res image */}
       <motion.img
         ref={highResRef}
         initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ 
+        animate={{
           opacity: highResLoaded ? 1 : 0,
-          scale: highResLoaded ? 1 : 0.5
+          scale: highResLoaded ? 1 : 0.5,
         }}
         transition={{ duration: 0.5 }}
         src={src}
         alt={alt}
         className="w-full h-full object-contain"
-        style={{ 
-          position: 'relative',
-          zIndex: 2
+        style={{
+          position: "relative",
+          zIndex: 2,
         }}
       />
-      
+
       {/* Loading skeleton */}
       {!lowResLoaded && !highResLoaded && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="absolute inset-0 bg-linear-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse"
         />
       )}
-      
     </div>
   );
 };

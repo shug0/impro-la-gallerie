@@ -1,10 +1,11 @@
-import { motion, type MotionProps } from "framer-motion";
+import { type MotionProps, motion } from "framer-motion";
 import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from "react";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";
 
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps> {
+export interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
@@ -42,11 +43,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       whileTap = { scale: 0.95 },
       ...props
     },
-    ref
+    ref,
   ) => {
     const baseClasses = "font-display tracking-wider";
     const widthClass = fullWidth ? "w-full" : "";
-    const combinedClassName = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${widthClass} ${className}`.trim();
+    const combinedClassName =
+      `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${widthClass} ${className}`.trim();
 
     if (enableMotion) {
       return (
@@ -66,7 +68,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

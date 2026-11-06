@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { metMuseumService } from './metMuseumApi';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { metMuseumService } from "./metMuseumApi";
 
 type MockResponse = {
   ok: boolean;
@@ -11,16 +11,16 @@ type MockResponse = {
 const fetchMock = vi.fn<(url: string) => Promise<MockResponse>>();
 globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-describe('MetMuseumService', () => {
+describe("MetMuseumService", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     // Reset service state
     // biome-ignore-start lint/complexity/useLiteralKeys: accès aux membres private du singleton, interdit en notation pointée
-    metMuseumService['objectIds'] = [];
-    metMuseumService['initialized'] = false;
-    metMuseumService['cache'].clear();
-    metMuseumService['usedIds'].clear();
-    metMuseumService['mode'] = 'exploration';
+    metMuseumService["objectIds"] = [];
+    metMuseumService["initialized"] = false;
+    metMuseumService["cache"].clear();
+    metMuseumService["usedIds"].clear();
+    metMuseumService["mode"] = "exploration";
     // biome-ignore-end lint/complexity/useLiteralKeys: fin de la remise à zéro
   });
 
@@ -28,17 +28,17 @@ describe('MetMuseumService', () => {
     vi.restoreAllMocks();
   });
 
-  describe('initialization', () => {
-    it('should initialize successfully in exploration mode', async () => {
+  describe("initialization", () => {
+    it("should initialize successfully in exploration mode", async () => {
       // Mock successful department listing
       fetchMock.mockImplementation((url: string) => {
-        if (url.includes('/objects?departmentIds=11|21|19|6|9|1')) {
+        if (url.includes("/objects?departmentIds=11|21|19|6|9|1")) {
           return Promise.resolve({
             ok: true,
             json: async () => ({ objectIDs: [1, 2, 3, 4, 5] }),
           });
         }
-        return Promise.reject(new Error('Unexpected URL'));
+        return Promise.reject(new Error("Unexpected URL"));
       });
 
       await metMuseumService.initialize();
@@ -47,8 +47,8 @@ describe('MetMuseumService', () => {
       expect(metMuseumService.availableArtworksCount).toBeGreaterThan(0);
     });
 
-    it('should initialize successfully in masterpieces mode', async () => {
-      metMuseumService.setMode('masterpieces');
+    it("should initialize successfully in masterpieces mode", async () => {
+      metMuseumService.setMode("masterpieces");
 
       // Mock successful highlights search
       fetchMock.mockResolvedValueOnce({
@@ -62,57 +62,65 @@ describe('MetMuseumService', () => {
       expect(metMuseumService.availableArtworksCount).toBe(5);
     });
 
-    it('should handle API returning HTML instead of JSON', async () => {
+    it("should handle API returning HTML instead of JSON", async () => {
       // This simulates the error we found: /search without q parameter returns HTML
       fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => {
-          throw new SyntaxError('Unexpected token \'<\', "<!DOCTYPE "... is not valid JSON');
+          throw new SyntaxError(
+            "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+          );
         },
       });
 
       await expect(metMuseumService.initialize()).rejects.toThrow();
     });
 
-    it('should handle network errors during initialization', async () => {
-      fetchMock.mockRejectedValueOnce(new Error('Network error'));
+    it("should handle network errors during initialization", async () => {
+      fetchMock.mockRejectedValueOnce(new Error("Network error"));
 
-      await expect(metMuseumService.initialize()).rejects.toThrow('Network error');
+      await expect(metMuseumService.initialize()).rejects.toThrow(
+        "Network error",
+      );
     });
 
-    it('should handle HTTP errors (404, 500, etc)', async () => {
+    it("should handle HTTP errors (404, 500, etc)", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 500,
       });
 
-      await expect(metMuseumService.initialize()).rejects.toThrow('HTTP 500');
+      await expect(metMuseumService.initialize()).rejects.toThrow("HTTP 500");
     });
 
-    it('should handle empty objectIDs response', async () => {
+    it("should handle empty objectIDs response", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ objectIDs: [] }),
       });
 
-      await expect(metMuseumService.initialize()).rejects.toThrow('No objects with images found');
+      await expect(metMuseumService.initialize()).rejects.toThrow(
+        "No objects with images found",
+      );
     });
 
-    it('should handle missing objectIDs in response', async () => {
+    it("should handle missing objectIDs in response", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => ({}),
       });
 
-      await expect(metMuseumService.initialize()).rejects.toThrow('No objects with images found');
+      await expect(metMuseumService.initialize()).rejects.toThrow(
+        "No objects with images found",
+      );
     });
 
-    it('should deduplicate object IDs', async () => {
+    it("should deduplicate object IDs", async () => {
       fetchMock.mockImplementation(() =>
         Promise.resolve({
           ok: true,
           json: async () => ({ objectIDs: [1, 2, 3, 1, 2, 3] }),
-        })
+        }),
       );
 
       await metMuseumService.initialize();
@@ -120,12 +128,15 @@ describe('MetMuseumService', () => {
       expect(metMuseumService.availableArtworksCount).toBe(3);
     });
 
-    it('should fetch every highlights page in masterpieces mode', async () => {
-      metMuseumService.setMode('masterpieces');
+    it("should fetch every highlights page in masterpieces mode", async () => {
+      metMuseumService.setMode("masterpieces");
 
       fetchMock.mockImplementation((url: string) => {
-        const offset = Number(new URL(url).searchParams.get('offset'));
-        const objectIDs = Array.from({ length: offset === 0 ? 500 : 200 }, (_, i) => offset + i + 1);
+        const offset = Number(new URL(url).searchParams.get("offset"));
+        const objectIDs = Array.from(
+          { length: offset === 0 ? 500 : 200 },
+          (_, i) => offset + i + 1,
+        );
         return Promise.resolve({
           ok: true,
           json: async () => ({ total: 700, objectIDs }),
@@ -139,7 +150,7 @@ describe('MetMuseumService', () => {
     });
   });
 
-  describe('getRandomArtwork', () => {
+  describe("getRandomArtwork", () => {
     beforeEach(async () => {
       // Mock successful initialization
       fetchMock.mockResolvedValueOnce({
@@ -149,16 +160,16 @@ describe('MetMuseumService', () => {
       await metMuseumService.initialize();
     });
 
-    it('should fetch artwork successfully', async () => {
+    it("should fetch artwork successfully", async () => {
       const mockArtwork = {
         objectID: 1,
-        title: 'Test Artwork',
-        artistDisplayName: 'Test Artist',
-        primaryImage: 'https://example.com/image.jpg',
-        medium: 'Oil on canvas',
-        dimensions: '100 x 100 cm',
-        department: 'European Paintings',
-        objectDate: '2020',
+        title: "Test Artwork",
+        artistDisplayName: "Test Artist",
+        primaryImage: "https://example.com/image.jpg",
+        medium: "Oil on canvas",
+        dimensions: "100 x 100 cm",
+        department: "European Paintings",
+        objectDate: "2020",
       };
 
       fetchMock.mockResolvedValueOnce({
@@ -169,26 +180,26 @@ describe('MetMuseumService', () => {
       const artwork = await metMuseumService.getRandomArtwork();
 
       expect(artwork).toBeTruthy();
-      expect(artwork?.title).toBe('Test Artwork');
-      expect(artwork?.primaryImage).toBe('https://example.com/image.jpg');
+      expect(artwork?.title).toBe("Test Artwork");
+      expect(artwork?.primaryImage).toBe("https://example.com/image.jpg");
     });
 
-    it('should skip artworks without primaryImage', async () => {
+    it("should skip artworks without primaryImage", async () => {
       const mockArtworkNoImage = {
         objectID: 1,
-        title: 'Test Artwork',
-        artistDisplayName: 'Test Artist',
-        primaryImage: '', // No image
-        medium: 'Oil on canvas',
-        dimensions: '100 x 100 cm',
-        department: 'European Paintings',
-        objectDate: '2020',
+        title: "Test Artwork",
+        artistDisplayName: "Test Artist",
+        primaryImage: "", // No image
+        medium: "Oil on canvas",
+        dimensions: "100 x 100 cm",
+        department: "European Paintings",
+        objectDate: "2020",
       };
 
       const mockArtworkWithImage = {
         ...mockArtworkNoImage,
         objectID: 2,
-        primaryImage: 'https://example.com/image.jpg',
+        primaryImage: "https://example.com/image.jpg",
       };
 
       fetchMock
@@ -204,25 +215,25 @@ describe('MetMuseumService', () => {
       const artwork = await metMuseumService.getRandomArtwork();
 
       expect(artwork?.objectID).toBe(2);
-      expect(artwork?.primaryImage).toBe('https://example.com/image.jpg');
+      expect(artwork?.primaryImage).toBe("https://example.com/image.jpg");
     });
 
-    it('should skip artworks without title', async () => {
+    it("should skip artworks without title", async () => {
       const mockArtworkNoTitle = {
         objectID: 1,
-        title: '',
-        artistDisplayName: 'Test Artist',
-        primaryImage: 'https://example.com/image.jpg',
-        medium: 'Oil on canvas',
-        dimensions: '100 x 100 cm',
-        department: 'European Paintings',
-        objectDate: '2020',
+        title: "",
+        artistDisplayName: "Test Artist",
+        primaryImage: "https://example.com/image.jpg",
+        medium: "Oil on canvas",
+        dimensions: "100 x 100 cm",
+        department: "European Paintings",
+        objectDate: "2020",
       };
 
       const mockArtworkWithTitle = {
         ...mockArtworkNoTitle,
         objectID: 2,
-        title: 'Valid Artwork',
+        title: "Valid Artwork",
       };
 
       fetchMock
@@ -237,10 +248,10 @@ describe('MetMuseumService', () => {
 
       const artwork = await metMuseumService.getRandomArtwork();
 
-      expect(artwork?.title).toBe('Valid Artwork');
+      expect(artwork?.title).toBe("Valid Artwork");
     });
 
-    it('should handle 404 errors for individual artworks', async () => {
+    it("should handle 404 errors for individual artworks", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 404,
@@ -252,24 +263,24 @@ describe('MetMuseumService', () => {
       expect(artwork).toBeNull();
     });
 
-    it('should retry up to 3 times on failure', async () => {
+    it("should retry up to 3 times on failure", async () => {
       let attempts = 0;
       fetchMock.mockImplementation(() => {
         attempts++;
         if (attempts < 3) {
-          return Promise.reject(new Error('Network error'));
+          return Promise.reject(new Error("Network error"));
         }
         return Promise.resolve({
           ok: true,
           json: async () => ({
             objectID: 1,
-            title: 'Success',
-            primaryImage: 'https://example.com/image.jpg',
-            artistDisplayName: 'Artist',
-            medium: 'Oil',
-            dimensions: '100x100',
-            department: 'Dept',
-            objectDate: '2020',
+            title: "Success",
+            primaryImage: "https://example.com/image.jpg",
+            artistDisplayName: "Artist",
+            medium: "Oil",
+            dimensions: "100x100",
+            department: "Dept",
+            objectDate: "2020",
           }),
         });
       });
@@ -280,11 +291,11 @@ describe('MetMuseumService', () => {
       expect(attempts).toBe(3);
     });
 
-    it('should handle malformed JSON responses', async () => {
+    it("should handle malformed JSON responses", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => {
-          throw new SyntaxError('Unexpected token');
+          throw new SyntaxError("Unexpected token");
         },
       });
 
@@ -293,11 +304,11 @@ describe('MetMuseumService', () => {
       expect(artwork).toBeNull();
     });
 
-    it('should provide default values for missing fields', async () => {
+    it("should provide default values for missing fields", async () => {
       const mockArtworkMinimal = {
         objectID: 1,
-        title: 'Test',
-        primaryImage: 'https://example.com/image.jpg',
+        title: "Test",
+        primaryImage: "https://example.com/image.jpg",
         // Missing: artistDisplayName, medium, dimensions, department, objectDate
       };
 
@@ -308,16 +319,16 @@ describe('MetMuseumService', () => {
 
       const artwork = await metMuseumService.getRandomArtwork();
 
-      expect(artwork?.artistDisplayName).toBe('Unknown Artist');
-      expect(artwork?.medium).toBe('Unknown Medium');
-      expect(artwork?.dimensions).toBe('Unknown Dimensions');
-      expect(artwork?.department).toBe('Unknown Department');
-      expect(artwork?.objectDate).toBe('Unknown Date');
+      expect(artwork?.artistDisplayName).toBe("Unknown Artist");
+      expect(artwork?.medium).toBe("Unknown Medium");
+      expect(artwork?.dimensions).toBe("Unknown Dimensions");
+      expect(artwork?.department).toBe("Unknown Department");
+      expect(artwork?.objectDate).toBe("Unknown Date");
     });
   });
 
-  describe('mode switching', () => {
-    it('should reset when mode changes after initialization', async () => {
+  describe("mode switching", () => {
+    it("should reset when mode changes after initialization", async () => {
       // Initialize in exploration mode
       fetchMock.mockResolvedValue({
         ok: true,
@@ -325,16 +336,16 @@ describe('MetMuseumService', () => {
       });
 
       await metMuseumService.initialize();
-      expect(metMuseumService.currentMode).toBe('exploration');
+      expect(metMuseumService.currentMode).toBe("exploration");
 
       // Change to masterpieces mode
-      metMuseumService.setMode('masterpieces');
+      metMuseumService.setMode("masterpieces");
 
       expect(metMuseumService.isInitialized).toBe(false);
       expect(metMuseumService.availableArtworksCount).toBe(0);
     });
 
-    it('should not reset if mode stays the same', async () => {
+    it("should not reset if mode stays the same", async () => {
       fetchMock.mockResolvedValue({
         ok: true,
         json: async () => ({ objectIDs: [1, 2, 3] }),
@@ -343,15 +354,15 @@ describe('MetMuseumService', () => {
       await metMuseumService.initialize();
       const countBefore = metMuseumService.availableArtworksCount;
 
-      metMuseumService.setMode('exploration'); // Same mode
+      metMuseumService.setMode("exploration"); // Same mode
 
       expect(metMuseumService.isInitialized).toBe(true);
       expect(metMuseumService.availableArtworksCount).toBe(countBefore);
     });
   });
 
-  describe('cache management', () => {
-    it('should cache fetched artworks', async () => {
+  describe("cache management", () => {
+    it("should cache fetched artworks", async () => {
       fetchMock
         .mockResolvedValueOnce({
           ok: true,
@@ -361,13 +372,13 @@ describe('MetMuseumService', () => {
           ok: true,
           json: async () => ({
             objectID: 1,
-            title: 'Cached',
-            primaryImage: 'https://example.com/image.jpg',
-            artistDisplayName: 'Artist',
-            medium: 'Oil',
-            dimensions: '100x100',
-            department: 'Dept',
-            objectDate: '2020',
+            title: "Cached",
+            primaryImage: "https://example.com/image.jpg",
+            artistDisplayName: "Artist",
+            medium: "Oil",
+            dimensions: "100x100",
+            department: "Dept",
+            objectDate: "2020",
           }),
         });
 
@@ -377,7 +388,7 @@ describe('MetMuseumService', () => {
       expect(metMuseumService.cachedArtworksCount).toBe(1);
     });
 
-    it('should clear cache when requested', async () => {
+    it("should clear cache when requested", async () => {
       fetchMock
         .mockResolvedValueOnce({
           ok: true,
@@ -387,13 +398,13 @@ describe('MetMuseumService', () => {
           ok: true,
           json: async () => ({
             objectID: 1,
-            title: 'Cached',
-            primaryImage: 'https://example.com/image.jpg',
-            artistDisplayName: 'Artist',
-            medium: 'Oil',
-            dimensions: '100x100',
-            department: 'Dept',
-            objectDate: '2020',
+            title: "Cached",
+            primaryImage: "https://example.com/image.jpg",
+            artistDisplayName: "Artist",
+            medium: "Oil",
+            dimensions: "100x100",
+            department: "Dept",
+            objectDate: "2020",
           }),
         });
 
@@ -406,32 +417,32 @@ describe('MetMuseumService', () => {
     });
   });
 
-  describe('edge cases', () => {
-    it('should handle timeout scenarios', async () => {
-      const timeoutError = new Error('Timeout');
-      timeoutError.name = 'AbortError';
+  describe("edge cases", () => {
+    it("should handle timeout scenarios", async () => {
+      const timeoutError = new Error("Timeout");
+      timeoutError.name = "AbortError";
 
       fetchMock.mockRejectedValueOnce(timeoutError);
 
       await expect(metMuseumService.initialize()).rejects.toThrow();
     });
 
-    it('should handle CORS errors', async () => {
-      const corsError = new Error('CORS error');
-      corsError.name = 'TypeError';
+    it("should handle CORS errors", async () => {
+      const corsError = new Error("CORS error");
+      corsError.name = "TypeError";
 
       fetchMock.mockRejectedValueOnce(corsError);
 
       await expect(metMuseumService.initialize()).rejects.toThrow();
     });
 
-    it('should handle rate limiting (429)', async () => {
+    it("should handle rate limiting (429)", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 429,
       });
 
-      await expect(metMuseumService.initialize()).rejects.toThrow('HTTP 429');
+      await expect(metMuseumService.initialize()).rejects.toThrow("HTTP 429");
     });
   });
 });

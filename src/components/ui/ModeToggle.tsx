@@ -7,8 +7,12 @@ interface ModeToggleProps {
   disabled?: boolean;
 }
 
-export const ModeToggle = ({ mode, onChange, disabled = false }: ModeToggleProps) => {
-  const isExploration = mode === 'exploration';
+export const ModeToggle = ({
+  mode,
+  onChange,
+  disabled = false,
+}: ModeToggleProps) => {
+  const isExploration = mode === "exploration";
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -20,8 +24,8 @@ export const ModeToggle = ({ mode, onChange, disabled = false }: ModeToggleProps
           className="absolute top-1 bottom-1 left-1 bg-[#2d2d2d] rounded-full"
           initial={false}
           animate={{
-            x: isExploration ? 0 : '100%',
-            width: isExploration ? '50%' : '50%',
+            x: isExploration ? 0 : "100%",
+            width: isExploration ? "50%" : "50%",
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         />
@@ -29,12 +33,12 @@ export const ModeToggle = ({ mode, onChange, disabled = false }: ModeToggleProps
         {/* Exploration button */}
         <button
           type="button"
-          onClick={() => !disabled && onChange('exploration')}
+          onClick={() => !disabled && onChange("exploration")}
           disabled={disabled}
           className={`
             relative z-10 px-6 py-3 rounded-full transition-colors duration-200
-            ${isExploration ? 'text-[#f5f1e8]' : 'text-[#6d6d6d]'}
-            ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+            ${isExploration ? "text-[#f5f1e8]" : "text-[#6d6d6d]"}
+            ${disabled ? "cursor-not-allowed" : "cursor-pointer"}
             font-display tracking-wide
           `}
         >
@@ -47,12 +51,12 @@ export const ModeToggle = ({ mode, onChange, disabled = false }: ModeToggleProps
         {/* Masterpieces button */}
         <button
           type="button"
-          onClick={() => !disabled && onChange('masterpieces')}
+          onClick={() => !disabled && onChange("masterpieces")}
           disabled={disabled}
           className={`
             relative z-10 px-6 py-3 rounded-full transition-colors duration-200
-            ${!isExploration ? 'text-[#f5f1e8]' : 'text-[#6d6d6d]'}
-            ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+            ${!isExploration ? "text-[#f5f1e8]" : "text-[#6d6d6d]"}
+            ${disabled ? "cursor-not-allowed" : "cursor-pointer"}
             font-display tracking-wide
           `}
         >

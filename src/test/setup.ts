@@ -1,6 +1,6 @@
-import { afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+import "@testing-library/jest-dom";
 
 // Cleanup after each test
 afterEach(() => {
@@ -12,7 +12,7 @@ afterEach(() => {
 globalThis.Image = class MockImage {
   onload: (() => void) | null = null;
   onerror: (() => void) | null = null;
-  src = '';
+  src = "";
 
   constructor() {
     setTimeout(() => {

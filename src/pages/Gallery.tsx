@@ -1,35 +1,40 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useFullscreen } from "../hooks/useFullscreen";
-import { useKeyboardShortcuts, type KeyboardShortcut } from "../hooks/useKeyboardShortcuts";
-import { useMetMuseum } from "../hooks/useMetMuseum";
-import { useArtworkGallery } from "../hooks/useArtworkGallery";
-import { ConfigurationScreen } from "../components/screens/ConfigurationScreen";
-import { LoadingScreen } from "../components/screens/LoadingScreen";
-import { WaitingScreen } from "../components/screens/WaitingScreen";
+import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArtworkDisplay } from "../components/artwork/ArtworkDisplay";
 import { ArtworkMetadata } from "../components/artwork/ArtworkMetadata";
-import { ErrorRecovery } from "../components/screens/ErrorRecovery";
+import { ConfigurationScreen } from "../components/screens/ConfigurationScreen";
 import { EndScreen } from "../components/screens/EndScreen";
+import { ErrorRecovery } from "../components/screens/ErrorRecovery";
+import { LoadingScreen } from "../components/screens/LoadingScreen";
+import { WaitingScreen } from "../components/screens/WaitingScreen";
 import { Button } from "../components/ui/Button";
 import { TouchControls } from "../components/ui/TouchControls";
 import { getRandomQuote } from "../data/quotes";
+import { useArtworkGallery } from "../hooks/useArtworkGallery";
+import { useFullscreen } from "../hooks/useFullscreen";
+import {
+  type KeyboardShortcut,
+  useKeyboardShortcuts,
+} from "../hooks/useKeyboardShortcuts";
+import { useMetMuseum } from "../hooks/useMetMuseum";
 import type { GalleryMode } from "../services/metMuseumApi";
 
 type GalleryStatus =
-  | 'configuration'  // Choix du mode
-  | 'loading'        // Chargement des œuvres
-  | 'error'          // Erreur de chargement
-  | 'waiting'        // Page de présentation
-  | 'artwork'        // Affichage des œuvres
-  | 'end';           // Écran de fin
+  | "configuration" // Choix du mode
+  | "loading" // Chargement des œuvres
+  | "error" // Erreur de chargement
+  | "waiting" // Page de présentation
+  | "artwork" // Affichage des œuvres
+  | "end"; // Écran de fin
 
 export default function Gallery() {
   // Système de statut pour gérer les écrans
-  const [status, setStatus] = useState<GalleryStatus>('configuration');
-  const [selectedMode, setSelectedMode] = useState<GalleryMode>('masterpieces');
+  const [status, setStatus] = useState<GalleryStatus>("configuration");
+  const [selectedMode, setSelectedMode] = useState<GalleryMode>("masterpieces");
   const [isHidden, setIsHidden] = useState(false);
-  const [imageRatio, setImageRatio] = useState<'landscape' | 'portrait'>('landscape');
+  const [imageRatio, setImageRatio] = useState<"landscape" | "portrait">(
+    "landscape",
+  );
 
   // Citation qui change toutes les 5 secondes pendant le chargement
   const [loadingQuote, setLoadingQuote] = useState(() => getRandomQuote());
@@ -38,7 +43,8 @@ export default function Gallery() {
   const [waitingQuote, setWaitingQuote] = useState(() => getRandomQuote());
 
   const { toggleFullscreen } = useFullscreen();
-  const { isLoading, isReady, error, artworksCount, initialize, retry } = useMetMuseum();
+  const { isLoading, isReady, error, artworksCount, initialize, retry } =
+    useMetMuseum();
   const {
     currentArtwork,
     nextArtwork,
@@ -49,14 +55,14 @@ export default function Gallery() {
   } = useArtworkGallery();
 
   // Synchroniser le statut avec les états du hook useMetMuseum, pendant le rendu
-  if (status !== 'configuration') {
+  if (status !== "configuration") {
     let syncedStatus: GalleryStatus = status;
     if (error) {
-      syncedStatus = 'error';
+      syncedStatus = "error";
     } else if (isLoading) {
-      syncedStatus = 'loading';
-    } else if (isReady && status === 'loading') {
-      syncedStatus = 'waiting';
+      syncedStatus = "loading";
+    } else if (isReady && status === "loading") {
+      syncedStatus = "waiting";
     }
     if (syncedStatus !== status) {
       setStatus(syncedStatus);
@@ -65,7 +71,7 @@ export default function Gallery() {
 
   // Rotation des citations pendant le chargement (toutes les 5 secondes)
   useEffect(() => {
-    if (status !== 'loading') return;
+    if (status !== "loading") return;
 
     const interval = setInterval(() => {
       setLoadingQuote(getRandomQuote());
@@ -76,7 +82,7 @@ export default function Gallery() {
 
   // Rotation des citations sur la page d'attente (toutes les 15 secondes)
   useEffect(() => {
-    if (status !== 'waiting') return;
+    if (status !== "waiting") return;
 
     const interval = setInterval(() => {
       setWaitingQuote(getRandomQuote());
@@ -100,37 +106,37 @@ export default function Gallery() {
   // Handler pour lancer la galerie (trigger loading)
   const handleLaunchGallery = useCallback(() => {
     initialize(selectedMode);
-    setStatus('loading');
+    setStatus("loading");
   }, [selectedMode, initialize]);
 
   const toggleHidden = useCallback(() => {
-    setIsHidden(prev => !prev);
+    setIsHidden((prev) => !prev);
   }, []);
 
   const handleShowEndScreen = useCallback(() => {
-    setStatus('end');
+    setStatus("end");
   }, []);
 
   const handleCloseEndScreen = useCallback(() => {
     // Retourner à l'affichage des œuvres seulement si on a une œuvre
     if (currentArtwork) {
-      setStatus('artwork');
+      setStatus("artwork");
     } else {
       // Si pas d'œuvre, retourner à la page d'attente
-      setStatus('waiting');
+      setStatus("waiting");
     }
   }, [currentArtwork]);
 
   // Navigation entre les pages et les œuvres
   const handleNext = useCallback(() => {
     switch (status) {
-      case 'configuration':
+      case "configuration":
         handleLaunchGallery();
         break;
-      case 'waiting':
-        setStatus('artwork');
+      case "waiting":
+        setStatus("artwork");
         break;
-      case 'artwork':
+      case "artwork":
         goToNextArtwork();
         break;
     }
@@ -165,11 +171,17 @@ export default function Gallery() {
         preventDefault: false,
       },
     ],
-    [toggleHidden, handleNext, toggleFullscreen, handleShowEndScreen, handleCloseEndScreen]
+    [
+      toggleHidden,
+      handleNext,
+      toggleFullscreen,
+      handleShowEndScreen,
+      handleCloseEndScreen,
+    ],
   );
   useKeyboardShortcuts(shortcuts);
 
-  const hasTouchControls = status === 'waiting' || status === 'artwork';
+  const hasTouchControls = status === "waiting" || status === "artwork";
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-black">
@@ -190,7 +202,9 @@ export default function Gallery() {
               aria-label="Réafficher l'interface"
               className="absolute inset-0 hidden items-end justify-center pb-touch-bar pointer-coarse:flex"
             >
-              <span className="text-gray-700 text-xs">Toucher l'écran pour réafficher</span>
+              <span className="text-gray-700 text-xs">
+                Toucher l'écran pour réafficher
+              </span>
             </button>
           </motion.div>
         )}
@@ -209,118 +223,118 @@ export default function Gallery() {
       </AnimatePresence>
 
       {/* Sur tactile, la hauteur de la barre est réservée sous le contenu */}
-      <div className={`absolute inset-0 ${hasTouchControls ? 'pointer-coarse:bottom-touch-bar' : ''}`}>
-      <AnimatePresence mode="wait">
-        {(() => {
-          switch (status) {
-            case 'configuration':
-              return (
-                <ConfigurationScreen
-                  key="configuration"
-                  mode={selectedMode}
-                  onModeChange={handleModeChange}
-                  onLaunch={handleLaunchGallery}
-                />
-              );
+      <div
+        className={`absolute inset-0 ${hasTouchControls ? "pointer-coarse:bottom-touch-bar" : ""}`}
+      >
+        <AnimatePresence mode="wait">
+          {(() => {
+            switch (status) {
+              case "configuration":
+                return (
+                  <ConfigurationScreen
+                    key="configuration"
+                    mode={selectedMode}
+                    onModeChange={handleModeChange}
+                    onLaunch={handleLaunchGallery}
+                  />
+                );
 
-            case 'loading':
-              return (
-                <LoadingScreen
-                  key="loading"
-                  quote={loadingQuote}
-                />
-              );
+              case "loading":
+                return <LoadingScreen key="loading" quote={loadingQuote} />;
 
-            case 'error':
-              return (
-                <motion.div
-                  key="error"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="absolute inset-0 bg-black flex flex-col items-center justify-center"
-                >
-                  <p className="text-red-400 text-xl mb-4 font-display">Erreur : {error}</p>
-                  <Button onClick={retry} size="md" enableMotion={false}>
-                    Réessayer
-                  </Button>
-                </motion.div>
-              );
+              case "error":
+                return (
+                  <motion.div
+                    key="error"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="absolute inset-0 bg-black flex flex-col items-center justify-center"
+                  >
+                    <p className="text-red-400 text-xl mb-4 font-display">
+                      Erreur : {error}
+                    </p>
+                    <Button onClick={retry} size="md" enableMotion={false}>
+                      Réessayer
+                    </Button>
+                  </motion.div>
+                );
 
-            case 'waiting':
-              return (
-                <WaitingScreen
-                  key="waiting"
-                  quote={waitingQuote}
-                  artworksCount={artworksCount}
-                  currentArtwork={currentArtwork}
-                />
-              );
+              case "waiting":
+                return (
+                  <WaitingScreen
+                    key="waiting"
+                    quote={waitingQuote}
+                    artworksCount={artworksCount}
+                    currentArtwork={currentArtwork}
+                  />
+                );
 
-            case 'end':
-              return (
-                <EndScreen
-                  key="end-screen"
-                  onClose={handleCloseEndScreen}
-                />
-              );
+              case "end":
+                return (
+                  <EndScreen key="end-screen" onClose={handleCloseEndScreen} />
+                );
 
-            case 'artwork':
-              return (
-          <motion.div
-            key="artwork-view"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 bg-black"
-          >
-            {artworkError ? (
-              /* Erreur lors du chargement d'une œuvre */
-              <ErrorRecovery
-                error={artworkError}
-                onRetry={() => {
-                  // Réessayer de charger une œuvre
-                  if (currentArtwork) {
-                    goToNextArtwork(); // Essayer l'œuvre suivante
-                  } else {
-                    loadInitialArtwork(); // Réessayer la première œuvre
-                  }
-                }}
-                onSkip={currentArtwork ? goToNextArtwork : undefined}
-              />
-            ) : currentArtwork ? (
-              <>
-                {/* Image + double buffer */}
-                <ArtworkDisplay
-                  currentArtwork={currentArtwork}
-                  nextArtwork={nextArtwork}
-                  onImageLoad={(ratio) => setImageRatio(ratio)}
-                />
+              case "artwork":
+                return (
+                  <motion.div
+                    key="artwork-view"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    className="absolute inset-0 bg-black"
+                  >
+                    {artworkError ? (
+                      /* Erreur lors du chargement d'une œuvre */
+                      <ErrorRecovery
+                        error={artworkError}
+                        onRetry={() => {
+                          // Réessayer de charger une œuvre
+                          if (currentArtwork) {
+                            goToNextArtwork(); // Essayer l'œuvre suivante
+                          } else {
+                            loadInitialArtwork(); // Réessayer la première œuvre
+                          }
+                        }}
+                        onSkip={currentArtwork ? goToNextArtwork : undefined}
+                      />
+                    ) : currentArtwork ? (
+                      <>
+                        {/* Image + double buffer */}
+                        <ArtworkDisplay
+                          currentArtwork={currentArtwork}
+                          nextArtwork={nextArtwork}
+                          onImageLoad={(ratio) => setImageRatio(ratio)}
+                        />
 
-                {/* Métadonnées (positionnement adaptatif) */}
-                <ArtworkMetadata
-                  artwork={currentArtwork}
-                  imageRatio={imageRatio}
-                  isVisible={!isHidden}
-                />
-              </>
-            ) : isLoadingArtwork ? (
-              /* Loading initial artwork */
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="w-12 h-12 border-2 border-gallery-gray border-t-transparent rounded-full"
-                />
-              </div>
-            ) : null}
-          </motion.div>
-              );
+                        {/* Métadonnées (positionnement adaptatif) */}
+                        <ArtworkMetadata
+                          artwork={currentArtwork}
+                          imageRatio={imageRatio}
+                          isVisible={!isHidden}
+                        />
+                      </>
+                    ) : isLoadingArtwork ? (
+                      /* Loading initial artwork */
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="w-12 h-12 border-2 border-gallery-gray border-t-transparent rounded-full"
+                        />
+                      </div>
+                    ) : null}
+                  </motion.div>
+                );
 
-            default:
-              return null;
-          }
-        })()}
-      </AnimatePresence>
+              default:
+                return null;
+            }
+          })()}
+        </AnimatePresence>
       </div>
     </div>
   );

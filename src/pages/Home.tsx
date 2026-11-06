@@ -25,9 +25,12 @@ export default function Home() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="text-gray-400 text-xl md:text-2xl text-center max-w-4xl mb-20 leading-relaxed md:leading-8 px-8"
         >
-          Projetez des œuvres d'art du Metropolitan Museum, sélectionnées aléatoirement.
+          Projetez des œuvres d'art du Metropolitan Museum, sélectionnées
+          aléatoirement.
           <br />
-          <span className="text-warm-white">Pensé pour vos spectacles d'improvisation.</span>
+          <span className="text-warm-white">
+            Pensé pour vos spectacles d'improvisation.
+          </span>
         </motion.p>
 
         {/* Bouton CTA */}

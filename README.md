@@ -5,7 +5,6 @@ _La Galerie_ est une application web conçue pour projeter des œuvres d'art du 
 <img width="709" height="576" alt="image" src="https://github.com/user-attachments/assets/6da087d1-15d8-4874-a277-e598a074c8ec" />
 <img width="1509" height="863" alt="image" src="https://github.com/user-attachments/assets/1f42a11a-d720-464c-8936-98aea4271221" />
 
-
 ## ✨ Fonctionnalités
 
 - **Accès à l'art** : Affiche des œuvres de la collection du Metropolitan Museum of Art.
@@ -43,14 +42,17 @@ _La Galerie_ est une application web conçue pour projeter des œuvres d'art du 
 ### Installation
 
 1.  Clonez le dépôt :
+
     ```bash
     git clone https://github.com/votre-utilisateur/la-galerie.git
     ```
 2.  Naviguez dans le répertoire du projet :
+
     ```bash
     cd la-galerie
     ```
 3.  Installez les dépendances :
+
     ```bash
     npm install
     ```

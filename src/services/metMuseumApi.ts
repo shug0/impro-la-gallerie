@@ -1,7 +1,8 @@
-const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
+const BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
 // /v1/search was retired on 2026-10-01. v1.1 returns at most 500 IDs per page
 // and an empty page past offset 10000.
-const SEARCH_URL = 'https://collectionapi.metmuseum.org/public/collection/v1.1/search';
+const SEARCH_URL =
+  "https://collectionapi.metmuseum.org/public/collection/v1.1/search";
 const SEARCH_PAGE_SIZE = 500;
 
 // Départements sélectionnés pour une variété d'œuvres visuelles
@@ -9,9 +10,9 @@ const DEFAULT_DEPARTMENTS = [
   11, // European Paintings
   21, // Modern Art
   19, // Photographs
-  6,  // Asian Art
-  9,  // Drawings and Prints
-  1,  // American Decorative Arts
+  6, // Asian Art
+  9, // Drawings and Prints
+  1, // American Decorative Arts
 ];
 
 export interface Artwork {
@@ -26,7 +27,7 @@ export interface Artwork {
   objectDate: string;
 }
 
-export type GalleryMode = 'exploration' | 'masterpieces';
+export type GalleryMode = "exploration" | "masterpieces";
 
 class MetMuseumService {
   private objectIds: number[] = [];
@@ -34,7 +35,7 @@ class MetMuseumService {
   private cache = new Map<number, Artwork>();
   private usedIds = new Set<number>();
   private departments: number[] = DEFAULT_DEPARTMENTS;
-  private mode: GalleryMode = 'exploration';
+  private mode: GalleryMode = "exploration";
 
   // Getters publics pour exposer l'état
   get isInitialized(): boolean {
@@ -59,7 +60,7 @@ class MetMuseumService {
    */
   setDepartments(departmentIds: number[]): void {
     if (this.initialized) {
-      throw new Error('Cannot change departments after initialization');
+      throw new Error("Cannot change departments after initialization");
     }
     this.departments = departmentIds;
   }
@@ -81,8 +82,11 @@ class MetMuseumService {
     if (this.initialized) return;
 
     try {
-      const modeLabel = this.mode === 'exploration' ? '🌍 Exploration Libre' : '⭐ Chefs-d\'Œuvre';
-      const isHighlight = this.mode === 'masterpieces';
+      const modeLabel =
+        this.mode === "exploration"
+          ? "🌍 Exploration Libre"
+          : "⭐ Chefs-d'Œuvre";
+      const isHighlight = this.mode === "masterpieces";
 
       let allObjectIds: number[] = [];
 
@@ -96,7 +100,7 @@ class MetMuseumService {
 
           do {
             const response = await fetch(
-              `${SEARCH_URL}?hasImages=true&isHighlight=true&q=*&limit=${SEARCH_PAGE_SIZE}&offset=${offset}`
+              `${SEARCH_URL}?hasImages=true&isHighlight=true&q=*&limit=${SEARCH_PAGE_SIZE}&offset=${offset}`,
             );
 
             if (!response.ok) {
@@ -109,18 +113,22 @@ class MetMuseumService {
             offset += SEARCH_PAGE_SIZE;
           } while (offset < total);
 
-          console.log(`   ✅ Global highlights: ${allObjectIds.length.toLocaleString()} objects`);
+          console.log(
+            `   ✅ Global highlights: ${allObjectIds.length.toLocaleString()} objects`,
+          );
         } catch (error) {
-          console.error('⚠️  Failed to fetch highlights:', error);
+          console.error("⚠️  Failed to fetch highlights:", error);
           throw error;
         }
       } else {
         // Mode exploration: /objects ne filtre pas sur la présence d'image,
         // les œuvres sans image sont écartées au tirage (fetchRandomArtworkWithRetry)
-        console.log(`${modeLabel} - Initializing with ${this.departments.length} departments...`);
+        console.log(
+          `${modeLabel} - Initializing with ${this.departments.length} departments...`,
+        );
 
         const response = await fetch(
-          `${BASE_URL}/objects?departmentIds=${this.departments.join('|')}`
+          `${BASE_URL}/objects?departmentIds=${this.departments.join("|")}`,
         );
 
         if (!response.ok) {
@@ -132,13 +140,15 @@ class MetMuseumService {
       }
 
       if (allObjectIds.length === 0) {
-        throw new Error('No objects with images found');
+        throw new Error("No objects with images found");
       }
 
       // Dédupliquer les IDs (un objet peut être dans plusieurs départements)
       const uniqueIds = [...new Set(allObjectIds)];
 
-      console.log(`✅ ${modeLabel}: ${uniqueIds.length.toLocaleString()} unique artworks`);
+      console.log(
+        `✅ ${modeLabel}: ${uniqueIds.length.toLocaleString()} unique artworks`,
+      );
 
       // Mélanger pour avoir un ordre aléatoire
       this.objectIds = this.shuffleArray(uniqueIds);
@@ -146,7 +156,7 @@ class MetMuseumService {
 
       console.log(`🎲 Ready to display random artworks!`);
     } catch (error) {
-      console.error('❌ Failed to initialize Met Museum API:', error);
+      console.error("❌ Failed to initialize Met Museum API:", error);
       throw error;
     }
   }
@@ -182,9 +192,12 @@ class MetMuseumService {
   }
 
   private getCachedArtwork(): Artwork | null {
-    const cachedIds = Array.from(this.cache.keys()).filter(id => !this.usedIds.has(id));
+    const cachedIds = Array.from(this.cache.keys()).filter(
+      (id) => !this.usedIds.has(id),
+    );
     if (cachedIds.length > 0) {
-      const randomCachedId = cachedIds[Math.floor(Math.random() * cachedIds.length)];
+      const randomCachedId =
+        cachedIds[Math.floor(Math.random() * cachedIds.length)];
       const artwork = this.cache.get(randomCachedId);
       if (artwork) {
         this.usedIds.add(randomCachedId);
@@ -194,7 +207,9 @@ class MetMuseumService {
     return null;
   }
 
-  private async fetchRandomArtworkWithRetry(maxRetries: number): Promise<Artwork | null> {
+  private async fetchRandomArtworkWithRetry(
+    maxRetries: number,
+  ): Promise<Artwork | null> {
     let retries = 0;
     const attemptedIds = new Set<number>();
 
@@ -203,39 +218,42 @@ class MetMuseumService {
         // Get unused random object ID
         let randomIndex: number;
         let objectId: number;
-        
+
         do {
           randomIndex = Math.floor(Math.random() * this.objectIds.length);
           objectId = this.objectIds[randomIndex];
-        } while (attemptedIds.has(objectId) && attemptedIds.size < this.objectIds.length);
-        
+        } while (
+          attemptedIds.has(objectId) &&
+          attemptedIds.size < this.objectIds.length
+        );
+
         attemptedIds.add(objectId);
 
         const artwork = await this.fetchArtwork(objectId);
-        
+
         if (artwork?.primaryImage && artwork.title) {
           // Cache the artwork and mark as used
           this.cache.set(objectId, artwork);
           this.usedIds.add(objectId);
-          
+
           // Preload next artworks in background
           this.preloadNext(2);
-          
+
           return artwork;
         }
       } catch (error) {
         console.warn(`Retry ${retries + 1}/${maxRetries}:`, error);
       }
-      
+
       retries++;
     }
 
     // If we've used all artworks, reset the used set
     if (this.usedIds.size >= this.objectIds.length) {
       this.usedIds.clear();
-      console.log('Resetting artwork pool - all artworks have been shown');
+      console.log("Resetting artwork pool - all artworks have been shown");
     }
-    
+
     return null;
   }
 
@@ -244,7 +262,7 @@ class MetMuseumService {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    
+
     const artwork = await response.json();
 
     if (!artwork.primaryImage || !artwork.title) {
@@ -252,18 +270,22 @@ class MetMuseumService {
     }
 
     // Generate low-res version for progressive loading
-    const lowResImage = artwork.primaryImage.replace('/original/', '/web-large/');
+    const lowResImage = artwork.primaryImage.replace(
+      "/original/",
+      "/web-large/",
+    );
 
     return {
       objectID: artwork.objectID,
-      title: artwork.title || 'Untitled',
-      artistDisplayName: artwork.artistDisplayName || 'Unknown Artist',
+      title: artwork.title || "Untitled",
+      artistDisplayName: artwork.artistDisplayName || "Unknown Artist",
       primaryImage: artwork.primaryImage,
-      lowResImage: lowResImage !== artwork.primaryImage ? lowResImage : undefined,
-      medium: artwork.medium || 'Unknown Medium',
-      dimensions: artwork.dimensions || 'Unknown Dimensions',
-      department: artwork.department || 'Unknown Department',
-      objectDate: artwork.objectDate || 'Unknown Date',
+      lowResImage:
+        lowResImage !== artwork.primaryImage ? lowResImage : undefined,
+      medium: artwork.medium || "Unknown Medium",
+      dimensions: artwork.dimensions || "Unknown Dimensions",
+      department: artwork.department || "Unknown Department",
+      objectDate: artwork.objectDate || "Unknown Date",
     };
   }
 
@@ -278,7 +300,7 @@ class MetMuseumService {
         try {
           const randomIndex = Math.floor(Math.random() * this.objectIds.length);
           const objectId = this.objectIds[randomIndex];
-          
+
           if (!this.cache.has(objectId) && !this.usedIds.has(objectId)) {
             const artwork = await this.fetchArtwork(objectId);
             if (artwork) {

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
-import { metMuseumService, type Artwork } from "./services/metMuseumApi";
+import { useCallback, useEffect, useState } from "react";
 import { ProgressiveImage } from "./components/artwork/ProgressiveImage";
+import { type Artwork, metMuseumService } from "./services/metMuseumApi";
 
 export default function RandomPicture() {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
@@ -36,7 +36,7 @@ export default function RandomPicture() {
   }, [fetchRandomArtwork]);
 
   const handleRetry = useCallback(() => {
-    setRetryCount(prev => prev + 1);
+    setRetryCount((prev) => prev + 1);
     setLoading(true);
     setError(null);
     fetchRandomArtwork();
@@ -73,7 +73,7 @@ export default function RandomPicture() {
             <div className="h-4 bg-gray-700 rounded-sm w-40 mx-auto"></div>
           </motion.div>
         </div>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
@@ -125,7 +125,7 @@ export default function RandomPicture() {
           onError={handleImageError}
         />
       </div>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

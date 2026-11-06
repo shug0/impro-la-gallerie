@@ -67,13 +67,25 @@ export const ErrorRecovery = ({
         className="flex flex-col sm:flex-row gap-4"
       >
         {/* Bouton Réessayer */}
-        <Button onClick={onRetry} variant="secondary" size="md" className="min-w-[200px] rounded-lg" enableMotion={false}>
+        <Button
+          onClick={onRetry}
+          variant="secondary"
+          size="md"
+          className="min-w-[200px] rounded-lg"
+          enableMotion={false}
+        >
           🔄 Réessayer
         </Button>
 
         {/* Bouton Passer (si disponible) */}
         {onSkip && (
-          <Button onClick={onSkip} variant="ghost" size="md" className="min-w-[200px] rounded-lg" enableMotion={false}>
+          <Button
+            onClick={onSkip}
+            variant="ghost"
+            size="md"
+            className="min-w-[200px] rounded-lg"
+            enableMotion={false}
+          >
             ⏭️ Passer
           </Button>
         )}

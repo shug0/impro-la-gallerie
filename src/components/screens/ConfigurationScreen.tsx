@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { ModeToggle } from "../ui/ModeToggle";
-import { Button } from "../ui/Button";
 import type { GalleryMode } from "../../services/metMuseumApi";
+import { Button } from "../ui/Button";
+import { ModeToggle } from "../ui/ModeToggle";
 
 export interface ConfigurationScreenProps {
   mode: GalleryMode;

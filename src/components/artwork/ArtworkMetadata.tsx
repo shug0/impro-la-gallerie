@@ -3,7 +3,7 @@ import type { Artwork } from "../../services/metMuseumApi";
 
 export interface ArtworkMetadataProps {
   artwork: Artwork;
-  imageRatio: 'landscape' | 'portrait';
+  imageRatio: "landscape" | "portrait";
   isVisible?: boolean;
   className?: string;
 }
@@ -22,16 +22,16 @@ export const ArtworkMetadata = ({
   className = "",
 }: ArtworkMetadataProps) => {
   // Positionnement selon le ratio de l'image
-  const isLandscape = imageRatio === 'landscape';
+  const isLandscape = imageRatio === "landscape";
 
   const positionClasses = isLandscape
-    ? 'absolute bottom-0 left-0 right-0'  // Bas, pleine largeur
-    : 'absolute right-0 top-0 bottom-0 w-96';  // Droite, largeur fixe
+    ? "absolute bottom-0 left-0 right-0" // Bas, pleine largeur
+    : "absolute right-0 top-0 bottom-0 w-96"; // Droite, largeur fixe
 
   // Direction de l'animation selon le positionnement
   const animationProps = isLandscape
-    ? { y: isVisible ? 0 : 20 }  // Slide depuis le bas
-    : { x: isVisible ? 0 : 20 };  // Slide depuis la droite
+    ? { y: isVisible ? 0 : 20 } // Slide depuis le bas
+    : { x: isVisible ? 0 : 20 }; // Slide depuis la droite
 
   return (
     <motion.div
@@ -50,9 +50,10 @@ export const ArtworkMetadata = ({
       <div
         className={`
           h-full
-          ${isLandscape
-            ? 'bg-linear-to-t from-black/90 via-black/70 to-transparent'
-            : 'bg-linear-to-l from-black/90 via-black/70 to-transparent'
+          ${
+            isLandscape
+              ? "bg-linear-to-t from-black/90 via-black/70 to-transparent"
+              : "bg-linear-to-l from-black/90 via-black/70 to-transparent"
           }
         `}
       >
@@ -73,12 +74,12 @@ export const ArtworkMetadata = ({
               <p className="font-medium">{artwork.objectDate}</p>
             )}
 
-            {artwork.medium && (
-              <p>{artwork.medium}</p>
-            )}
+            {artwork.medium && <p>{artwork.medium}</p>}
 
             {artwork.dimensions && (
-              <p className="text-xs md:text-sm text-gray-500">{artwork.dimensions}</p>
+              <p className="text-xs md:text-sm text-gray-500">
+                {artwork.dimensions}
+              </p>
             )}
 
             {artwork.department && (

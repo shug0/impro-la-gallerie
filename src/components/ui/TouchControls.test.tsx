@@ -1,14 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { TouchControls } from './TouchControls';
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { TouchControls } from "./TouchControls";
 
-describe('TouchControls', () => {
+describe("TouchControls", () => {
   it.each([
-    ["Masquer l'interface", 'onHide'],
-    ['Plein écran', 'onToggleFullscreen'],
-    ['Suivante', 'onNext'],
-    ['Fin', 'onEnd'],
-  ] as const)('le bouton « %s » appelle %s', (name, handlerName) => {
+    ["Masquer l'interface", "onHide"],
+    ["Plein écran", "onToggleFullscreen"],
+    ["Suivante", "onNext"],
+    ["Fin", "onEnd"],
+  ] as const)("le bouton « %s » appelle %s", (name, handlerName) => {
     const handlers = {
       onHide: vi.fn(),
       onToggleFullscreen: vi.fn(),
@@ -17,11 +17,12 @@ describe('TouchControls', () => {
     };
     render(<TouchControls {...handlers} />);
 
-    fireEvent.click(screen.getByRole('button', { name }));
+    fireEvent.click(screen.getByRole("button", { name }));
 
     expect(handlers[handlerName]).toHaveBeenCalledTimes(1);
     for (const [otherName, otherHandler] of Object.entries(handlers)) {
-      if (otherName !== handlerName) expect(otherHandler).not.toHaveBeenCalled();
+      if (otherName !== handlerName)
+        expect(otherHandler).not.toHaveBeenCalled();
     }
   });
 });

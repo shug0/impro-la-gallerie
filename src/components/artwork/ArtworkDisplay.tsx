@@ -1,11 +1,11 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import type { Artwork } from "../../services/metMuseumApi";
 
 export interface ArtworkDisplayProps {
   currentArtwork: Artwork;
   nextArtwork: Artwork | null;
-  onImageLoad?: (ratio: 'landscape' | 'portrait') => void;
+  onImageLoad?: (ratio: "landscape" | "portrait") => void;
   onNextImagePreloaded?: () => void;
   className?: string;
 }
@@ -31,9 +31,15 @@ export const ArtworkDisplay = ({
   });
 
   // Marque l'œuvre courante et la suivante comme chargées quand l'une change (déjà préchargées)
-  if (shownIds.current !== currentArtwork.objectID || shownIds.next !== nextArtwork?.objectID) {
-    setShownIds({ current: currentArtwork.objectID, next: nextArtwork?.objectID });
-    setLoadedImages(prev => {
+  if (
+    shownIds.current !== currentArtwork.objectID ||
+    shownIds.next !== nextArtwork?.objectID
+  ) {
+    setShownIds({
+      current: currentArtwork.objectID,
+      next: nextArtwork?.objectID,
+    });
+    setLoadedImages((prev) => {
       const newSet = new Set(prev);
       newSet.add(currentArtwork.objectID);
       if (nextArtwork) newSet.add(nextArtwork.objectID);
@@ -44,12 +50,15 @@ export const ArtworkDisplay = ({
   /**
    * Détecte le ratio de l'image et appelle le callback
    */
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, artworkId: number) => {
+  const handleImageLoad = (
+    e: React.SyntheticEvent<HTMLImageElement>,
+    artworkId: number,
+  ) => {
     const img = e.currentTarget;
     const ratio = img.naturalWidth / img.naturalHeight;
-    const imageRatio = ratio > 1 ? 'landscape' : 'portrait';
+    const imageRatio = ratio > 1 ? "landscape" : "portrait";
 
-    setLoadedImages(prev => new Set(prev).add(artworkId));
+    setLoadedImages((prev) => new Set(prev).add(artworkId));
 
     // Only call callback for current artwork
     if (artworkId === currentArtwork.objectID) {
@@ -67,7 +76,9 @@ export const ArtworkDisplay = ({
   const isCurrentLoaded = loadedImages.has(currentArtwork.objectID);
 
   return (
-    <div className={`relative w-full h-full flex items-center justify-center p-8 bg-black ${className}`}>
+    <div
+      className={`relative w-full h-full flex items-center justify-center p-8 bg-black ${className}`}
+    >
       {/* Crossfade entre les images avec AnimatePresence */}
       {/* Sans mode="wait" pour permettre la superposition des images pendant la transition */}
       <AnimatePresence initial={false}>
@@ -77,9 +88,9 @@ export const ArtworkDisplay = ({
           alt={currentArtwork.title}
           className="absolute max-w-full max-h-full object-contain"
           style={{
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
           }}
           onLoad={(e) => handleImageLoad(e, currentArtwork.objectID)}
           initial={{ opacity: 0 }}
@@ -87,7 +98,7 @@ export const ArtworkDisplay = ({
           exit={{ opacity: 0 }}
           transition={{
             duration: 0.8,
-            ease: [0.4, 0.0, 0.2, 1] // easeOut custom pour transition douce
+            ease: [0.4, 0.0, 0.2, 1], // easeOut custom pour transition douce
           }}
         />
       </AnimatePresence>
@@ -111,8 +122,8 @@ export const ArtworkDisplay = ({
           className="absolute pointer-events-none"
           style={{
             opacity: 0,
-            visibility: 'hidden',
-            position: 'absolute',
+            visibility: "hidden",
+            position: "absolute",
             top: -9999,
             left: -9999,
           }}

@@ -1,6 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-export const useAnimatedCounter = (max: number, intervalMs: number, isActive = true) => {
+export const useAnimatedCounter = (
+  max: number,
+  intervalMs: number,
+  isActive = true,
+) => {
   const [count, setCount] = useState(1);
   const lastUpdate = useRef<number>(0);
   const isActiveRef = useRef(isActive);
@@ -16,7 +20,7 @@ export const useAnimatedCounter = (max: number, intervalMs: number, isActive = t
     const animate = (timestamp: number) => {
       // If not active, schedule next frame but don't update
       if (isActiveRef.current && timestamp - lastUpdate.current >= intervalMs) {
-        setCount(prev => prev >= max ? 1 : prev + 1);
+        setCount((prev) => (prev >= max ? 1 : prev + 1));
         lastUpdate.current = timestamp;
       }
 

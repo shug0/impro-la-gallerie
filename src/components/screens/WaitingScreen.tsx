@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Artwork } from "../../services/metMuseumApi";
 
 export interface WaitingScreenProps {
@@ -68,7 +68,7 @@ export const WaitingScreen = ({
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-gray-400 text-xl italic"
         >
-          {artworksCount.toLocaleString('fr-FR')} œuvres disponibles
+          {artworksCount.toLocaleString("fr-FR")} œuvres disponibles
         </motion.p>
       )}
 
@@ -80,8 +80,8 @@ export const WaitingScreen = ({
           className="absolute pointer-events-none"
           style={{
             opacity: 0,
-            visibility: 'hidden',
-            position: 'absolute',
+            visibility: "hidden",
+            position: "absolute",
             top: -9999,
             left: -9999,
           }}

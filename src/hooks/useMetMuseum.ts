@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { metMuseumService, type GalleryMode } from "../services/metMuseumApi";
+import { useState } from "react";
+import { type GalleryMode, metMuseumService } from "../services/metMuseumApi";
 
 export interface UseMetMuseumState {
   isLoading: boolean;
@@ -21,7 +21,7 @@ export const useMetMuseum = () => {
   const [mode, setMode] = useState<GalleryMode | null>(null);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['metMuseum', mode],
+    queryKey: ["metMuseum", mode],
     queryFn: async () => {
       if (!mode) return null; // Skip if no mode selected yet
 
@@ -52,7 +52,11 @@ export const useMetMuseum = () => {
   return {
     isLoading,
     isReady: !isLoading && !error && !!data,
-    error: error ? (error instanceof Error ? error.message : "Erreur de chargement") : null,
+    error: error
+      ? error instanceof Error
+        ? error.message
+        : "Erreur de chargement"
+      : null,
     artworksCount: data?.artworksCount ?? 0,
     cachedCount: data?.cachedCount ?? 0,
     initialize, // Expose manual initialization function

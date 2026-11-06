@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { metMuseumService, type Artwork } from "../services/metMuseumApi";
+import { useCallback, useState } from "react";
+import { type Artwork, metMuseumService } from "../services/metMuseumApi";
 
 export interface UseArtworkGalleryResult {
   currentArtwork: Artwork | null;
@@ -27,7 +27,7 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
    * Le navigateur la met en cache HTTP automatiquement
    */
   const preloadImage = useCallback((url: string): Promise<void> => {
-    const filename = url.substring(url.lastIndexOf('/') + 1);
+    const filename = url.substring(url.lastIndexOf("/") + 1);
     console.log(`⏳ Preloading: ${filename}`);
 
     return new Promise((resolve, reject) => {
@@ -59,27 +59,30 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
    * Récupère une nouvelle œuvre depuis le service Met Museum
    * Réessaie au plus `maxRetries` fois si l'œuvre reçue n'a pas d'image
    */
-  const fetchNewArtwork = useCallback(async (maxRetries = 5): Promise<Artwork | null> => {
-    try {
-      for (let retriesLeft = maxRetries; ; retriesLeft--) {
-        const artwork = await metMuseumService.getRandomArtwork();
+  const fetchNewArtwork = useCallback(
+    async (maxRetries = 5): Promise<Artwork | null> => {
+      try {
+        for (let retriesLeft = maxRetries; ; retriesLeft--) {
+          const artwork = await metMuseumService.getRandomArtwork();
 
-        if (artwork?.primaryImage) {
-          console.log(`📦 Fetched #${artwork.objectID}: "${artwork.title}"`);
-          return artwork;
-        }
+          if (artwork?.primaryImage) {
+            console.log(`📦 Fetched #${artwork.objectID}: "${artwork.title}"`);
+            return artwork;
+          }
 
-        if (retriesLeft <= 0) {
-          console.error("❌ Max retries reached");
-          return null;
+          if (retriesLeft <= 0) {
+            console.error("❌ Max retries reached");
+            return null;
+          }
         }
+      } catch (err) {
+        console.error("Failed to fetch artwork:", err);
+        setError(err instanceof Error ? err.message : "Failed to load artwork");
+        return null;
       }
-    } catch (err) {
-      console.error("Failed to fetch artwork:", err);
-      setError(err instanceof Error ? err.message : "Failed to load artwork");
-      return null;
-    }
-  }, []);
+    },
+    [],
+  );
 
   /**
    * Charge la première œuvre au montage (appelé depuis App.tsx)
@@ -135,7 +138,9 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
     }
 
     if (!currentArtwork && attempts >= maxAttempts) {
-      setError("Unable to load any artwork after multiple attempts. Please check your connection.");
+      setError(
+        "Unable to load any artwork after multiple attempts. Please check your connection.",
+      );
     }
 
     setIsLoadingArtwork(false);
