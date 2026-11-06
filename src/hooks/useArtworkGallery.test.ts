@@ -415,7 +415,7 @@ describe('useArtworkGallery', () => {
   });
 
   describe('error recovery', () => {
-    it('should clear error when loading new artwork', async () => {
+    it('should clear a transient error once a retry loads an artwork', async () => {
       vi.mocked(metMuseumService.getRandomArtwork)
         .mockRejectedValueOnce(new Error('First error'))
         .mockResolvedValueOnce(mockArtwork)
@@ -427,19 +427,9 @@ describe('useArtworkGallery', () => {
         await result.current.loadInitialArtwork();
       });
 
-      await waitFor(() => {
-        expect(result.current.error).toBeTruthy();
-      });
-
-      // Try again - should clear error
-      await act(async () => {
-        await result.current.loadInitialArtwork();
-      });
-
-      await waitFor(() => {
-        expect(result.current.error).toBeNull();
-        expect(result.current.currentArtwork).toBeTruthy();
-      });
+      // Gallery affiche l'erreur à la place de l'œuvre : elle ne doit pas survivre au succès
+      expect(result.current.currentArtwork?.objectID).toBe(1);
+      expect(result.current.error).toBeNull();
     });
   });
 

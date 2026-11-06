@@ -111,6 +111,7 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
 
           // Succès ! Définir comme artwork courant
           setCurrentArtwork(artwork);
+          setError(null); // Une erreur d'un essai précédent masquerait l'œuvre chargée
           console.log("✅ Initial artwork ready");
 
           // Immédiatement précharger la suivante
@@ -155,6 +156,7 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
         try {
           await preloadImage(newArtwork.primaryImage);
           setCurrentArtwork(newArtwork);
+          setError(null);
 
           // Preload N+1
           const next = await fetchNewArtwork();
