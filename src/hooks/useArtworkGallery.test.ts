@@ -91,38 +91,39 @@ describe('useArtworkGallery', () => {
         expect(result.current.error).toBeTruthy();
       });
 
-      expect(result.current.error).toBe('Failed to fetch artwork');
+      // Le hook réessaie 5 fois, puis remplace l'erreur du service par son message final
+      expect(result.current.error).toContain('Unable to load any artwork');
       expect(result.current.currentArtwork).toBeNull();
       expect(result.current.isLoadingArtwork).toBe(false);
     });
 
-    it('should handle image preload timeout', async () => {
-      // Mock Image with timeout
-      globalThis.Image = class {
-        onload: (() => void) | null = null;
-        onerror: ((error: Error) => void) | null = null;
-        src = '';
+    it('should give up after the 30s preload timeout on every attempt', async () => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+      try {
+        // Image qui ne se charge jamais : seul le délai de 30 s du hook la rejette
+        globalThis.Image = class {
+          onload: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          src = '';
+        } as unknown as typeof Image;
 
-        constructor() {
-          setTimeout(() => {
-            if (this.onerror) {
-              this.onerror(new Error('Image load timeout'));
-            }
-          }, 11000); // Exceed 10s timeout
-        }
-      } as unknown as typeof Image;
+        vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValue(mockArtwork);
 
-      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
+        const { result } = renderHook(() => useArtworkGallery());
 
-      const { result } = renderHook(() => useArtworkGallery());
+        await act(async () => {
+          const loading = result.current.loadInitialArtwork();
+          await vi.advanceTimersByTimeAsync(5 * 30000);
+          await loading;
+        });
 
-      await act(async () => {
-        await result.current.loadInitialArtwork();
-      });
-
-      await waitFor(() => {
-        expect(result.current.error).toBeTruthy();
-      }, { timeout: 12000 });
+        expect(result.current.error).toContain('Unable to load any artwork');
+        expect(result.current.currentArtwork).toBeNull();
+        expect(result.current.isLoadingArtwork).toBe(false);
+      } finally {
+        vi.mocked(metMuseumService.getRandomArtwork).mockReset();
+        vi.useRealTimers();
+      }
     });
 
     it('should handle image load failure', async () => {
@@ -153,7 +154,7 @@ describe('useArtworkGallery', () => {
         expect(result.current.error).toBeTruthy();
       });
 
-      expect(result.current.error).toContain('Failed to initialize gallery');
+      expect(result.current.error).toContain('Unable to load any artwork');
     });
 
     it('should not reload if already loaded', async () => {
@@ -254,7 +255,8 @@ describe('useArtworkGallery', () => {
       });
     });
 
-    it('should handle no next artwork available', async () => {
+    it('should fetch and show a new artwork when none was preloaded', async () => {
+      // Une seule œuvre disponible au chargement : la suivante reste vide
       vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork);
 
       const { result } = renderHook(() => useArtworkGallery());
@@ -263,23 +265,17 @@ describe('useArtworkGallery', () => {
         await result.current.loadInitialArtwork();
       });
 
-      // Force nextArtwork to be null
-      await waitFor(() => {
-        expect(result.current.currentArtwork).toBeTruthy();
-      });
+      expect(result.current.currentArtwork?.objectID).toBe(1);
+      expect(result.current.nextArtwork).toBeNull();
 
-      // Manually set nextArtwork to null for testing
-      result.current.nextArtwork = null;
-
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      vi.mocked(metMuseumService.getRandomArtwork).mockResolvedValueOnce(mockArtwork2);
 
       await act(async () => {
         await result.current.goToNextArtwork();
       });
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith('No next artwork available');
-
-      consoleWarnSpy.mockRestore();
+      expect(result.current.currentArtwork?.objectID).toBe(2);
+      expect(result.current.error).toBeNull();
     });
 
     it('should handle preload failure for N+2 artwork', async () => {

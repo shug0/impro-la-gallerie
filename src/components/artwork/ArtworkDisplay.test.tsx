@@ -39,7 +39,7 @@ describe('ArtworkDisplay', () => {
       render(<ArtworkDisplay currentArtwork={mockArtwork} nextArtwork={null} />);
 
       // Check for spinner (div with rotating animation)
-      const spinner = document.querySelector('.border-t-transparent');
+      const spinner = document.querySelector('.border-t-gray-500');
       expect(spinner).toBeTruthy();
     });
 
@@ -52,7 +52,7 @@ describe('ArtworkDisplay', () => {
       fireEvent.load(image);
 
       await waitFor(() => {
-        const spinner = document.querySelector('.border-t-transparent');
+        const spinner = document.querySelector('.border-t-gray-500');
         expect(spinner).toBeFalsy();
       });
     });
@@ -306,7 +306,7 @@ describe('ArtworkDisplay', () => {
       });
     });
 
-    it('should reset loading state when artwork changes', async () => {
+    it('should show a new artwork without spinner, since it was preloaded', async () => {
       const { rerender } = render(
         <ArtworkDisplay currentArtwork={mockArtwork} nextArtwork={null} />
       );
@@ -315,7 +315,7 @@ describe('ArtworkDisplay', () => {
       fireEvent.load(firstImage);
 
       await waitFor(() => {
-        const spinner = document.querySelector('.border-t-transparent');
+        const spinner = document.querySelector('.border-t-gray-500');
         expect(spinner).toBeFalsy();
       });
 
@@ -327,9 +327,10 @@ describe('ArtworkDisplay', () => {
 
       rerender(<ArtworkDisplay currentArtwork={newArtwork} nextArtwork={null} />);
 
-      // Spinner should be visible again
-      const spinner = document.querySelector('.border-t-transparent');
-      expect(spinner).toBeTruthy();
+      // L'œuvre suivante est préchargée par useArtworkGallery : pas de spinner à la transition
+      expect(screen.getByAltText('New Artwork')).toBeTruthy();
+      const spinner = document.querySelector('.border-t-gray-500');
+      expect(spinner).toBeFalsy();
     });
   });
 
