@@ -1,5 +1,5 @@
-import { motion, MotionProps } from "framer-motion";
-import { ButtonHTMLAttributes, forwardRef, ReactNode } from "react";
+import { motion, type MotionProps } from "framer-motion";
+import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from "react";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";

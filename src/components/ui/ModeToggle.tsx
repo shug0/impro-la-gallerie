@@ -28,6 +28,7 @@ export const ModeToggle = ({ mode, onChange, disabled = false }: ModeToggleProps
 
         {/* Exploration button */}
         <button
+          type="button"
           onClick={() => !disabled && onChange('exploration')}
           disabled={disabled}
           className={`
@@ -45,6 +46,7 @@ export const ModeToggle = ({ mode, onChange, disabled = false }: ModeToggleProps
 
         {/* Masterpieces button */}
         <button
+          type="button"
           onClick={() => !disabled && onChange('masterpieces')}
           disabled={disabled}
           className={`

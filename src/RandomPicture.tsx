@@ -102,6 +102,7 @@ export default function RandomPicture() {
             </p>
           )}
           <button
+            type="button"
             onClick={handleRetry}
             disabled={retryCount >= 3}
             className="text-lg border border-white px-4 py-2 rounded-sm hover:bg-white hover:text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"

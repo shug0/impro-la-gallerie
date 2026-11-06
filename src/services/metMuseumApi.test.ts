@@ -15,11 +15,13 @@ describe('MetMuseumService', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     // Reset service state
+    // biome-ignore-start lint/complexity/useLiteralKeys: accès aux membres private du singleton, interdit en notation pointée
     metMuseumService['objectIds'] = [];
     metMuseumService['initialized'] = false;
     metMuseumService['cache'].clear();
     metMuseumService['usedIds'].clear();
     metMuseumService['mode'] = 'exploration';
+    // biome-ignore-end lint/complexity/useLiteralKeys: fin de la remise à zéro
   });
 
   afterEach(() => {

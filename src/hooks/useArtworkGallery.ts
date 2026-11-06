@@ -64,7 +64,7 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
       for (let retriesLeft = maxRetries; ; retriesLeft--) {
         const artwork = await metMuseumService.getRandomArtwork();
 
-        if (artwork && artwork.primaryImage) {
+        if (artwork?.primaryImage) {
           console.log(`📦 Fetched #${artwork.objectID}: "${artwork.title}"`);
           return artwork;
         }
@@ -128,7 +128,6 @@ export const useArtworkGallery = (): UseArtworkGalleryResult => {
           // Image failed to load, try next artwork
           attempts++;
           console.log(`🔄 Auto-skip (${attempts}/${maxAttempts})`);
-          continue;
         }
       } catch {
         attempts++;

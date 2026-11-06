@@ -213,7 +213,7 @@ class MetMuseumService {
 
         const artwork = await this.fetchArtwork(objectId);
         
-        if (artwork && artwork.primaryImage && artwork.title) {
+        if (artwork?.primaryImage && artwork.title) {
           // Cache the artwork and mark as used
           this.cache.set(objectId, artwork);
           this.usedIds.add(objectId);
